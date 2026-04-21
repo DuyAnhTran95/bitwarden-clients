@@ -1,5 +1,5 @@
-<div class="tw-flex" *ngIf="!hideMultiSelect">
-  <bit-form-field *ngIf="permissionMode == 'edit'" class="tw-mr-3 tw-shrink-0 tw-basis-2/5">
+<div class="tw-flex tw-gap-3" *ngIf="!hideMultiSelect">
+  <bit-form-field *ngIf="permissionMode == 'edit'" class="tw-shrink-0 tw-basis-2/5">
     <bit-label>{{ "permission" | i18n }}</bit-label>
     <bit-select
       bitInput
@@ -13,7 +13,7 @@
     </bit-select>
   </bit-form-field>
 
-  <bit-form-field class="tw-grow tw-p-3" *ngIf="!disabled">
+  <bit-form-field class="tw-grow" *ngIf="!disabled">
     <bit-label>{{ selectorLabelText }}</bit-label>
     <bit-multi-select
       class="tw-w-full"

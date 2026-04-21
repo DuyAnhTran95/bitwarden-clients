@@ -91,7 +91,6 @@ export class BitFormFieldComponent implements AfterContentChecked {
     } else {
       this.input().ariaDescribedBy = undefined;
     }
-
     this.prefixHasChildren.set((this.prefixContainer()?.nativeElement.childElementCount ?? 0) > 0);
     this.suffixHasChildren.set((this.suffixContainer()?.nativeElement.childElementCount ?? 0) > 0);
   }

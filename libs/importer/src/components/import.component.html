@@ -465,33 +465,9 @@
           (csvDataLoaded)="this.formGroup.controls.fileContents.setValue($event)"
         ></import-chrome>
       } @else {
-        <bit-form-field>
+        <bit-file-upload [(files)]="selectedFiles">
           <bit-label>{{ "selectImportFile" | i18n }}</bit-label>
-          <div
-            class="file-selector tw-text-main tw-flex tw-items-center tw-h-full tw-gap-2 tw-break-words"
-          >
-            <button
-              bitButton
-              type="button"
-              size="small"
-              buttonType="secondary"
-              (click)="fileSelector.click()"
-            >
-              {{ "chooseFile" | i18n }}
-            </button>
-            {{ this.fileSelected ? this.fileSelected.name : ("noFileChosen" | i18n) }}
-          </div>
-          <input
-            bitInput
-            #fileSelector
-            type="file"
-            id="import_input_file"
-            formControlName="file"
-            (change)="setSelectedFile($event)"
-            hidden
-            class="tw-hidden"
-          />
-        </bit-form-field>
+        </bit-file-upload>
         <bit-form-field disableMargin>
           <bit-label>{{ "orCopyPasteFileContents" | i18n }}</bit-label>
           <textarea

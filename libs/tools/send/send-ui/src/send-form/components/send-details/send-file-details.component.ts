@@ -7,6 +7,7 @@ import { SendFileView } from "@bitwarden/common/tools/send/models/view/send-file
 import { SendType } from "@bitwarden/common/tools/send/types/send-type";
 import {
   ButtonModule,
+  FileUploadComponent,
   FormFieldModule,
   SectionComponent,
   TypographyModule,
@@ -23,11 +24,12 @@ import { SendFormService } from "../../abstractions/send-form.service";
   imports: [
     ButtonModule,
     CommonModule,
+    FileUploadComponent,
+    FormFieldModule,
+    FormsModule,
     I18nPipe,
     ReactiveFormsModule,
-    FormFieldModule,
     SectionComponent,
-    FormsModule,
     TypographyModule,
   ],
 })
@@ -40,7 +42,7 @@ export class SendFileDetailsComponent implements OnInit {
   });
 
   FileSendType = SendType.File;
-  fileName = "";
+  selectedFiles: File[] = [];
 
   constructor() {
     this.sendFormService.registerChildForm("sendFileDetailsForm", this.sendFileDetailsForm);
@@ -54,12 +56,11 @@ export class SendFileDetailsComponent implements OnInit {
     });
   }
 
-  onFileSelected = (event: Event): void => {
-    const file = (event.target as HTMLInputElement).files?.[0];
+  onFilesChanged = (files: File[]): void => {
+    const file = files[0];
     if (!file) {
       return;
     }
-    this.fileName = file.name;
     this.sendFormService.setFile(file);
   };
 

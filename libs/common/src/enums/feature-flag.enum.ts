@@ -55,6 +55,7 @@ export enum FeatureFlag {
   SdkKeyConnectorMigration = "use-sdk-for-key-connector-migration",
   UnlockViaSDK = "unlock-via-sdk",
   NoLogoutOnKeyUpgradeRotation = "pm-31050-no-logout-key-upgrade-rotation",
+  EnableAccountEncryptionV2UserPasswordRegistration = "pm-27278-v2-password-registration",
 
   /* Tools */
   UseSdkPasswordGenerators = "pm-19976-use-sdk-password-generators",

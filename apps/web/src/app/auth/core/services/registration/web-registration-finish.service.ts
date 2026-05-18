@@ -19,6 +19,13 @@ import { MasterPasswordServiceAbstraction } from "@bitwarden/common/key-manageme
 import { LogService } from "@bitwarden/common/platform/abstractions/log.service";
 import { UserKey } from "@bitwarden/common/types/key";
 import { KeyService } from "@bitwarden/key-management";
+import {
+  OrganizationId as SdkOrganizationId,
+  UserId as SdkUserId,
+  UserMasterPasswordRegistrationRequest,
+} from "@bitwarden/sdk-internal";
+import { asUuid, SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.service";
+import { ConfigService } from "@bitwarden/common/platform/abstractions/config/config.service";
 
 export class WebRegistrationFinishService
   extends DefaultRegistrationFinishService
@@ -28,12 +35,14 @@ export class WebRegistrationFinishService
     protected keyService: KeyService,
     protected accountApiService: AccountApiService,
     protected masterPasswordService: MasterPasswordServiceAbstraction,
+    protected configService: ConfigService,
+    protected sdkService: SdkService,
     private organizationInviteService: OrganizationInviteService,
     private policyApiService: PolicyApiServiceAbstraction,
     private logService: LogService,
     private policyService: PolicyService,
   ) {
-    super(keyService, accountApiService, masterPasswordService);
+    super(keyService, accountApiService, masterPasswordService, configService, sdkService);
   }
 
   override async getOrgNameFromOrgInvite(): Promise<string | null> {
@@ -74,6 +83,55 @@ export class WebRegistrationFinishService
     );
 
     return masterPasswordPolicyOpts;
+  }
+
+  override async buildSdkRegisterRequest(
+    email: string,
+    salt: string,
+    masterPassword: string,
+    masterPasswordHint?: string,
+    emailVerificationToken?: string,
+    orgSponsoredFreeFamilyPlanToken?: string,
+    acceptEmergencyAccessInviteToken?: string,
+    emergencyAccessId?: string,
+    providerInviteToken?: string,
+    providerUserId?: string,
+  ): Promise<UserMasterPasswordRegistrationRequest> {
+    const registerRequest = await super.buildSdkRegisterRequest(
+      email,
+      salt,
+      masterPassword,
+      masterPasswordHint,
+      emailVerificationToken,
+    );
+
+    // web specific logic
+    // Org invites are deep linked. Non-existent accounts are redirected to the register page.
+    // Org user id and token are included here only for validation and two factor purposes.
+    const orgInvite = await this.organizationInviteService.getOrganizationInvite();
+    if (orgInvite != null) {
+      registerRequest.organization_user_id = this.toOptionalSdkOrganizationId(
+        orgInvite.organizationUserId,
+      );
+      registerRequest.org_invite_token = orgInvite.token;
+    }
+    // Invite is accepted after login (on deep link redirect).
+
+    if (orgSponsoredFreeFamilyPlanToken) {
+      registerRequest.org_sponsored_free_family_plan_token = orgSponsoredFreeFamilyPlanToken;
+    }
+
+    if (acceptEmergencyAccessInviteToken && emergencyAccessId) {
+      registerRequest.accept_emergency_access_invite_token = acceptEmergencyAccessInviteToken;
+      registerRequest.accept_emergency_access_id = this.toOptionalSdkUserId(emergencyAccessId);
+    }
+
+    if (providerInviteToken && providerUserId) {
+      registerRequest.provider_invite_token = providerInviteToken;
+      registerRequest.provider_user_id = this.toOptionalSdkUserId(providerUserId);
+    }
+
+    return registerRequest;
   }
 
   // Note: the org invite token and email verification are mutually exclusive. Only one will be present.
@@ -122,5 +180,13 @@ export class WebRegistrationFinishService
     }
 
     return registerRequest;
+  }
+
+  protected toOptionalSdkUserId(value?: string): SdkUserId | undefined {
+    return value ? asUuid<SdkUserId>(value) : undefined;
+  }
+
+  protected toOptionalSdkOrganizationId(value?: string): SdkOrganizationId | undefined {
+    return value ? asUuid<SdkOrganizationId>(value) : undefined;
   }
 }

@@ -9,16 +9,23 @@ import { MasterPasswordServiceAbstraction } from "@bitwarden/common/key-manageme
 import { KeysRequest } from "@bitwarden/common/models/request/keys.request";
 import { UserKey } from "@bitwarden/common/types/key";
 import { KeyService } from "@bitwarden/key-management";
+import { FeatureFlag } from "@bitwarden/common/enums/feature-flag.enum";
+import { ConfigService } from "@bitwarden/common/platform/abstractions/config/config.service";
+import { asUuid, SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.service";
 
 import { PasswordInputResult } from "../../input-password/password-input-result";
 
 import { RegistrationFinishService } from "./registration-finish.service";
+import { firstValueFrom } from "rxjs";
+import { UserMasterPasswordRegistrationRequest } from "@bitwarden/sdk-internal";
 
 export class DefaultRegistrationFinishService implements RegistrationFinishService {
   constructor(
     protected keyService: KeyService,
     protected accountApiService: AccountApiService,
     protected masterPasswordService: MasterPasswordServiceAbstraction,
+    protected configService: ConfigService,
+    protected sdkService: SdkService,
   ) {}
 
   getOrgNameFromOrgInvite(): Promise<string | null> {
@@ -44,33 +51,102 @@ export class DefaultRegistrationFinishService implements RegistrationFinishServi
     assertNonNullish(passwordInputResult.kdfConfig, "kdfConfig", ctx);
     assertTruthy(passwordInputResult.salt, "salt", ctx);
 
-    const newMasterKey = await this.keyService.makeMasterKey(
-      passwordInputResult.newPassword,
-      passwordInputResult.salt,
-      passwordInputResult.kdfConfig,
+    const useV2RegistrationViaSdk = await this.configService.getFeatureFlag(
+      FeatureFlag.EnableAccountEncryptionV2UserPasswordRegistration,
     );
 
-    const [newUserKey, newEncUserKey] = await this.keyService.makeUserKey(newMasterKey);
+    if (useV2RegistrationViaSdk) {
+      const sdkClient = await firstValueFrom(this.sdkService.client$);
+      if (!sdkClient) {
+        throw new Error("SDK not available");
+      }
 
-    if (!newUserKey || !newEncUserKey) {
-      throw new Error("User key could not be created");
+      const registerRequest = await this.buildSdkRegisterRequest(
+        email,
+        passwordInputResult.salt,
+        passwordInputResult.newPassword, // String,
+        passwordInputResult.newPasswordHint, // Option<String>,
+        emailVerificationToken, // Option<String>,
+        orgSponsoredFreeFamilyPlanToken,
+        acceptEmergencyAccessInviteToken,
+        emergencyAccessId,
+        providerInviteToken,
+        providerUserId,
+      );
+
+      // The SDK call returns the
+      // - account_cryptographic_state
+      // - master_password_unlock
+      // - user_key
+      // we currently discard this as all finishRegistration flows immediately
+      // log in after a successful return. However, there is potential for
+      // setting state directly upon successful registration in the future,
+      // similar to how Key Connector and TDE handle registration.
+      await sdkClient
+        .auth()
+        .registration()
+        .post_keys_for_user_password_registration(registerRequest);
+
+      return;
+    } else {
+      const newMasterKey = await this.keyService.makeMasterKey(
+        passwordInputResult.newPassword,
+        passwordInputResult.salt,
+        passwordInputResult.kdfConfig,
+      );
+
+      const [newUserKey, newEncUserKey] = await this.keyService.makeUserKey(newMasterKey);
+
+      if (!newUserKey || !newEncUserKey) {
+        throw new Error("User key could not be created");
+      }
+      const userAsymmetricKeys = await this.keyService.makeKeyPair(newUserKey);
+
+      const registerRequest = await this.buildRegisterRequest(
+        newUserKey,
+        email,
+        passwordInputResult,
+        userAsymmetricKeys,
+        emailVerificationToken,
+        orgSponsoredFreeFamilyPlanToken,
+        acceptEmergencyAccessInviteToken,
+        emergencyAccessId,
+        providerInviteToken,
+        providerUserId,
+      );
+
+      return await this.accountApiService.registerFinish(registerRequest);
     }
-    const userAsymmetricKeys = await this.keyService.makeKeyPair(newUserKey);
+  }
 
-    const registerRequest = await this.buildRegisterRequest(
-      newUserKey,
-      email,
-      passwordInputResult,
-      userAsymmetricKeys,
-      emailVerificationToken,
-      orgSponsoredFreeFamilyPlanToken,
-      acceptEmergencyAccessInviteToken,
-      emergencyAccessId,
-      providerInviteToken,
-      providerUserId,
-    );
+  protected async buildSdkRegisterRequest(
+    email: string,
+    salt: string,
+    masterPassword: string,
+    masterPasswordHint?: string,
+    emailVerificationToken?: string,
+    orgSponsoredFreeFamilyPlanToken?: string, // web only
+    acceptEmergencyAccessInviteToken?: string, // web only
+    emergencyAccessId?: string, // web only
+    providerInviteToken?: string, // web only
+    providerUserId?: string, // web only
+  ): Promise<UserMasterPasswordRegistrationRequest> {
+    const registerFinishRequest: UserMasterPasswordRegistrationRequest = {
+      email: email,
+      salt: salt,
+      master_password: masterPassword,
+      master_password_hint: masterPasswordHint,
+      email_verification_token: emailVerificationToken,
+      organization_user_id: undefined,
+      org_invite_token: undefined,
+      org_sponsored_free_family_plan_token: undefined,
+      accept_emergency_access_invite_token: undefined,
+      accept_emergency_access_id: undefined,
+      provider_invite_token: undefined,
+      provider_user_id: undefined,
+    };
 
-    return await this.accountApiService.registerFinish(registerRequest);
+    return registerFinishRequest;
   }
 
   protected async buildRegisterRequest(

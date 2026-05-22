@@ -56,6 +56,18 @@
   "typeBankAccountSubtitle": {
     "message": "Banking details"
   },
+  "typePassport": {
+    "message": "Passport"
+  },
+  "passportDetails": {
+    "message": "Passport details"
+  },
+  "passportAdded": {
+    "message": "Passport added"
+  },
+  "typePassportSubtitle": {
+    "message": "Travel document"
+  },
   "folderSubtitle": {
     "message": "Organise your items"
   },
@@ -63,10 +75,10 @@
     "message": "Organise shared items"
   },
   "typeDriversLicense": {
-    "message": "License"
+    "message": "Licence"
   },
   "typeDriversLicenseSubtitle": {
-    "message": "Drivers license or ID"
+    "message": "Driving licence or ID"
   },
   "chooseItemToAdd": {
     "message": "Choose item to add"
@@ -150,12 +162,8 @@
     "message": "View bank account",
     "description": "Header for view bank account item type"
   },
-  "viewItemHeaderDriversLicense": {
-    "message": "View licence",
-    "description": "Header for view license item type"
-  },
   "viewItemHeaderLicense": {
-    "message": "View license",
+    "message": "View licence",
     "description": "Header for view license item type"
   },
   "viewItemHeaderPassport": {
@@ -219,7 +227,7 @@
     "description": "Header for edit bank account item type"
   },
   "editItemHeaderLicense": {
-    "message": "Edit license",
+    "message": "Edit licence",
     "description": "Header for edit license item type"
   },
   "editItemHeaderPassport": {
@@ -382,6 +390,42 @@
   },
   "passportNumber": {
     "message": "Passport number"
+  },
+  "sex": {
+    "message": "Sex"
+  },
+  "copySex": {
+    "message": "Copy sex"
+  },
+  "birthPlace": {
+    "message": "Birth place"
+  },
+  "copyBirthPlace": {
+    "message": "Copy birth place"
+  },
+  "nationality": {
+    "message": "Nationality"
+  },
+  "copyNationality": {
+    "message": "Copy nationality"
+  },
+  "copyIssuingCountry": {
+    "message": "Copy issuing country"
+  },
+  "passportType": {
+    "message": "Passport type"
+  },
+  "copyPassportType": {
+    "message": "Copy passport type"
+  },
+  "copyNationalIdentificationNumber": {
+    "message": "Copy national identification number"
+  },
+  "nationalIdentificationNumber": {
+    "message": "National identification number"
+  },
+  "copyIssuingAuthority": {
+    "message": "Copy issuing authority"
   },
   "licenseNumber": {
     "message": "Licence number"
@@ -1180,6 +1224,10 @@
   },
   "noItemsInList": {
     "message": "There are no items to list."
+  },
+  "noValueEntered": {
+    "message": "No value entered",
+    "description": "Screen reader announcement appended to a custom field's name when the field has no value entered."
   },
   "sendVerificationCode": {
     "message": "Send a verification code to your email"
@@ -2538,9 +2586,6 @@
   },
   "browserIntegrationWindowsStoreDesc": {
     "message": "Unfortunately browser integration is currently not supported in the Microsoft Store version."
-  },
-  "browserIntegrationLinuxDesc": {
-    "message": "Unfortunately browser integration is currently not supported in the Linux version."
   },
   "enableHardwareAcceleration": {
     "message": "Use hardware acceleration"
@@ -5030,6 +5075,9 @@
   "userVerificationFailed": {
     "message": "User verification failed."
   },
+  "more": {
+    "message": "More"
+  },
   "enterMonth": {
     "message": "Enter month."
   },
@@ -5046,7 +5094,7 @@
     "message": "Enter a valid year."
   },
   "searchDriversLicense": {
-    "message": "Search licenses"
+    "message": "Search licences"
   },
   "bankAccount": {
     "message": "Bank account"
@@ -5088,6 +5136,9 @@
   "searchBankAccount": {
     "message": "Search bank account"
   },
+  "searchPassport": {
+    "message": "Search passports"
+  },
   "copyAccountNumber": {
     "message": "Copy account number"
   },
@@ -5110,7 +5161,10 @@
     "message": "Copy last name"
   },
   "copyLicenseNumber": {
-    "message": "Copy license number"
+    "message": "Copy licence number"
+  },
+  "copyPassportNumber": {
+    "message": "Copy passport number"
   },
   "bankAccountTypeChecking": {
     "message": "Checking"
@@ -5189,8 +5243,11 @@
     "message": "Progress bar",
     "description": "This is the name of a page component that displays progress to the user. This string will be used to label the progress bar for a screenreader when multiple progress bars are on a page, like 'Progress bar 1' and 'Progress bar 2'."
   },
+  "errorImportingMyItemsMultiCollection": {
+    "message": "You cannot import items into My Items that are part of multiple collections"
+  },
   "driversLicenseDetails": {
-    "message": "License details"
+    "message": "Licence details"
   },
   "dateOfBirth": {
     "message": "Date of birth"
@@ -5208,7 +5265,7 @@
     "message": "Issuing country"
   },
   "issuingState": {
-    "message": "Issuing state / province"
+    "message": "Issuing state"
   },
   "issueDate": {
     "message": "Issue date"
@@ -5229,6 +5286,6 @@
     "message": "Issuing authority"
   },
   "licenseClass": {
-    "message": "License class"
+    "message": "Licence class"
   }
 }

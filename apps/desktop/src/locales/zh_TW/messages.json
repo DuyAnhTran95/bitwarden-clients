@@ -21,7 +21,7 @@
     "message": "登入"
   },
   "typeCard": {
-    "message": "支付卡"
+    "message": "付款卡"
   },
   "typeIdentity": {
     "message": "身分"
@@ -55,6 +55,18 @@
   },
   "typeBankAccountSubtitle": {
     "message": "銀行資料"
+  },
+  "typePassport": {
+    "message": "護照"
+  },
+  "passportDetails": {
+    "message": "Passport details"
+  },
+  "passportAdded": {
+    "message": "Passport added"
+  },
+  "typePassportSubtitle": {
+    "message": "Travel document"
   },
   "folderSubtitle": {
     "message": "整理您的項目"
@@ -149,10 +161,6 @@
   "viewItemHeaderBankAccount": {
     "message": "檢視銀行帳戶",
     "description": "Header for view bank account item type"
-  },
-  "viewItemHeaderDriversLicense": {
-    "message": "檢視駕照",
-    "description": "Header for view license item type"
   },
   "viewItemHeaderLicense": {
     "message": "檢視駕照",
@@ -382,6 +390,42 @@
   },
   "passportNumber": {
     "message": "護照號碼"
+  },
+  "sex": {
+    "message": "性別"
+  },
+  "copySex": {
+    "message": "複製性別"
+  },
+  "birthPlace": {
+    "message": "Birth place"
+  },
+  "copyBirthPlace": {
+    "message": "Copy birth place"
+  },
+  "nationality": {
+    "message": "Nationality"
+  },
+  "copyNationality": {
+    "message": "Copy nationality"
+  },
+  "copyIssuingCountry": {
+    "message": "Copy issuing country"
+  },
+  "passportType": {
+    "message": "Passport type"
+  },
+  "copyPassportType": {
+    "message": "Copy passport type"
+  },
+  "copyNationalIdentificationNumber": {
+    "message": "Copy national identification number"
+  },
+  "nationalIdentificationNumber": {
+    "message": "National identification number"
+  },
+  "copyIssuingAuthority": {
+    "message": "Copy issuing authority / office"
   },
   "licenseNumber": {
     "message": "許可證編號"
@@ -1180,6 +1224,10 @@
   },
   "noItemsInList": {
     "message": "沒有可列出的項目。"
+  },
+  "noValueEntered": {
+    "message": "No value entered",
+    "description": "Screen reader announcement appended to a custom field's name when the field has no value entered."
   },
   "sendVerificationCode": {
     "message": "傳送驗證碼至您的電子郵件信箱"
@@ -2538,9 +2586,6 @@
   },
   "browserIntegrationWindowsStoreDesc": {
     "message": "很遺憾，Microsoft Store 版本目前尚不支援瀏覽器整合功能。"
-  },
-  "browserIntegrationLinuxDesc": {
-    "message": "很遺憾，Linux 版本目前尚未支援瀏覽器整合功能。"
   },
   "enableHardwareAcceleration": {
     "message": "使用硬體加速"
@@ -4746,7 +4791,7 @@
     "message": "郵編 / 郵政代碼"
   },
   "cardNumberLabel": {
-    "message": "支付卡號碼"
+    "message": "卡號"
   },
   "upgradeNow": {
     "message": "立即升級"
@@ -5030,6 +5075,9 @@
   "userVerificationFailed": {
     "message": "使用者驗證失敗。"
   },
+  "more": {
+    "message": "更多"
+  },
   "enterMonth": {
     "message": "請輸入月份。"
   },
@@ -5088,6 +5136,9 @@
   "searchBankAccount": {
     "message": "搜尋銀行帳戶"
   },
+  "searchPassport": {
+    "message": "Search passports"
+  },
   "copyAccountNumber": {
     "message": "複製帳號"
   },
@@ -5111,6 +5162,9 @@
   },
   "copyLicenseNumber": {
     "message": "複製證照號碼"
+  },
+  "copyPassportNumber": {
+    "message": "複製護照號碼"
   },
   "bankAccountTypeChecking": {
     "message": "支票帳戶"
@@ -5188,6 +5242,9 @@
   "progressBar": {
     "message": "進度條",
     "description": "This is the name of a page component that displays progress to the user. This string will be used to label the progress bar for a screenreader when multiple progress bars are on a page, like 'Progress bar 1' and 'Progress bar 2'."
+  },
+  "errorImportingMyItemsMultiCollection": {
+    "message": "You cannot import items into My Items that are part of multiple collections"
   },
   "driversLicenseDetails": {
     "message": "駕照詳細資訊"

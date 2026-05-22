@@ -167,6 +167,9 @@
   "copyPassportNumber": {
     "message": "Útlevélszám másolása"
   },
+  "copyNationalIdentificationNumber": {
+    "message": "Nemzeti azonosító szám másolása"
+  },
   "copyFirstName": {
     "message": "Személynév másolása"
   },
@@ -2001,11 +2004,32 @@
   "brand": {
     "message": "Márka"
   },
+  "birthDay": {
+    "message": "Születési nap"
+  },
+  "birthMonth": {
+    "message": "Születési hónap"
+  },
+  "birthYear": {
+    "message": "Születési év"
+  },
+  "expirationDay": {
+    "message": "Lejárati dátum"
+  },
   "expirationMonth": {
     "message": "Lejárati hónap"
   },
   "expirationYear": {
     "message": "Lejárati év"
+  },
+  "issueDay": {
+    "message": "Kiállítási nap"
+  },
+  "issueMonth": {
+    "message": "Kiállítási hónap"
+  },
+  "issueYear": {
+    "message": "Kiállítási év"
   },
   "monthly": {
     "message": "hónap"
@@ -2100,6 +2124,51 @@
   "passportNumber": {
     "message": "Útlevélszám"
   },
+  "dateOfBirth": {
+    "message": "Születési dátum"
+  },
+  "sex": {
+    "message": "Nem"
+  },
+  "copySex": {
+    "message": "Nem másolása"
+  },
+  "birthPlace": {
+    "message": "Születési hely"
+  },
+  "copyBirthPlace": {
+    "message": "Születési hely másolása"
+  },
+  "nationality": {
+    "message": "Állampolgárság"
+  },
+  "copyNationality": {
+    "message": "Állampolgárság másolása"
+  },
+  "issuingCountry": {
+    "message": "Kiállító ország"
+  },
+  "copyIssuingCountry": {
+    "message": "Kiállító ország másolása"
+  },
+  "passportType": {
+    "message": "Útlevél típus"
+  },
+  "copyPassportType": {
+    "message": "Útlevél típus másolása"
+  },
+  "nationalIdentificationNumber": {
+    "message": "Nemzeti azonosító szám"
+  },
+  "issuingAuthority": {
+    "message": "Kiállító hatóság"
+  },
+  "copyIssuingAuthority": {
+    "message": "Kiállító hatóság/hivatal másolása"
+  },
+  "issueDate": {
+    "message": "Kiállítási dátum"
+  },
   "licenseNumber": {
     "message": "Vezetői engedély száma"
   },
@@ -2190,6 +2259,18 @@
   "typeBankAccountSubtitle": {
     "message": "Banki adatok"
   },
+  "typePassport": {
+    "message": "Útlevél"
+  },
+  "passportDetails": {
+    "message": "Útlevél adatok"
+  },
+  "passportAdded": {
+    "message": "Az útlevél hozzáadásra került."
+  },
+  "typePassportSubtitle": {
+    "message": "Utazási dokumentum"
+  },
   "typeDriversLicense": {
     "message": "Licensz"
   },
@@ -2199,41 +2280,8 @@
   "driversLicenseDetails": {
     "message": "Licensz részletek"
   },
-  "dateOfBirth": {
-    "message": "Születési dátum"
-  },
-  "birthMonth": {
-    "message": "Születési hónap"
-  },
-  "birthDay": {
-    "message": "Születési nap"
-  },
-  "birthYear": {
-    "message": "Születési év"
-  },
-  "issuingCountry": {
-    "message": "Kiállító ország"
-  },
   "issuingState": {
     "message": "Kiállító állam/tartomány"
-  },
-  "issuingAuthority": {
-    "message": "Kiállító hatóság"
-  },
-  "issueDate": {
-    "message": "Kiállítási dátum"
-  },
-  "issueMonth": {
-    "message": "Kiállítási hónap"
-  },
-  "issueDay": {
-    "message": "Kiállítási nap"
-  },
-  "issueYear": {
-    "message": "Kiállítási év"
-  },
-  "expirationDay": {
-    "message": "Lejárati dátum"
   },
   "licenseClass": {
     "message": "Licensz osztály"
@@ -2896,18 +2944,6 @@
   },
   "biometricsFailedDesc": {
     "message": "A biometrikus adatokat nem lehet kitölteni, fontoljuk meg a mesterjelszó használatát vagy a kijelentkezést. Ha ez továbbra is fennáll, forduljunk a Bitwarden ügyfélszolgálatához."
-  },
-  "nativeMessaginPermissionErrorTitle": {
-    "message": "A jogosultság nincs megadva."
-  },
-  "nativeMessaginPermissionErrorDesc": {
-    "message": "A Bitwarden Desktop alkalmazással való kommunikáció engedélye nélkül nem adhatunk meg biometrikus adatokat a böngésző kiterjesztésében. Próbáljuk újra."
-  },
-  "nativeMessaginPermissionSidebarTitle": {
-    "message": "Engedélykérési hiba történt."
-  },
-  "nativeMessaginPermissionSidebarDesc": {
-    "message": "Ez a művelet nem hajtható végre az oldalsávon. Próbáljuk meg újra a műveletet a felbukkanó ablakban."
   },
   "personalOwnershipSubmitError": {
     "message": "Egy vállalati házirend miatt korlátozásra került az elemek személyes tárolóba történő mentése. Módosítsuk a Tulajdon opciót egy szervezetre és válasszunk az elérhető gyűjtemények közül."
@@ -5061,6 +5097,10 @@
       }
     }
   },
+  "noValueEntered": {
+    "message": "Nincs megadva érték.",
+    "description": "Screen reader announcement appended to a custom field's name when the field has no value entered."
+  },
   "noValuesToCopy": {
     "message": "Nincsenek másolandó értékek."
   },
@@ -6478,6 +6518,9 @@
   "searchBankAccount": {
     "message": "Bankfiók keresése"
   },
+  "searchPassport": {
+    "message": "Útlevelek keresése"
+  },
   "copyAccountNumber": {
     "message": "Számlaszám másolása"
   },
@@ -6513,6 +6556,9 @@
   },
   "downloadFailed": {
     "message": "A letöltés sikertelen volt."
+  },
+  "more": {
+    "message": "Továbbiak"
   },
   "maxAccessCount": {
     "message": "Maximális elérési szám",
@@ -6557,5 +6603,8 @@
   },
   "hideEmailPolicyInEffect": {
     "message": "A szervezetnek az email cím láthatóságára van szüksége. Kapcsoljuk ki az \"Email cím elrejtése a nézők elől\" opciót a mentéshez."
+  },
+  "errorImportingMyItemsMultiCollection": {
+    "message": "Nem importálhatunk olyan elemeket a Saját elemekbe, amelyek több gyűjtemény részei."
   }
 }

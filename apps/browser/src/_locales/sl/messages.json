@@ -167,6 +167,9 @@
   "copyPassportNumber": {
     "message": "Kopiraj številko potnega lista"
   },
+  "copyNationalIdentificationNumber": {
+    "message": "Copy national identification number"
+  },
   "copyFirstName": {
     "message": "Copy first name"
   },
@@ -2001,11 +2004,32 @@
   "brand": {
     "message": "Znamka"
   },
+  "birthDay": {
+    "message": "Birth day"
+  },
+  "birthMonth": {
+    "message": "Birth month"
+  },
+  "birthYear": {
+    "message": "Birth year"
+  },
+  "expirationDay": {
+    "message": "Expiration day"
+  },
   "expirationMonth": {
     "message": "Mesec poteka"
   },
   "expirationYear": {
     "message": "Leto poteka"
+  },
+  "issueDay": {
+    "message": "Issue day"
+  },
+  "issueMonth": {
+    "message": "Issue month"
+  },
+  "issueYear": {
+    "message": "Issue year"
   },
   "monthly": {
     "message": "month"
@@ -2100,6 +2124,51 @@
   "passportNumber": {
     "message": "Številka potnega lista"
   },
+  "dateOfBirth": {
+    "message": "Date of birth"
+  },
+  "sex": {
+    "message": "Sex"
+  },
+  "copySex": {
+    "message": "Copy sex"
+  },
+  "birthPlace": {
+    "message": "Birth place"
+  },
+  "copyBirthPlace": {
+    "message": "Copy birth place"
+  },
+  "nationality": {
+    "message": "Nationality"
+  },
+  "copyNationality": {
+    "message": "Copy nationality"
+  },
+  "issuingCountry": {
+    "message": "Issuing country"
+  },
+  "copyIssuingCountry": {
+    "message": "Copy issuing country"
+  },
+  "passportType": {
+    "message": "Passport type"
+  },
+  "copyPassportType": {
+    "message": "Copy passport type"
+  },
+  "nationalIdentificationNumber": {
+    "message": "National identification number"
+  },
+  "issuingAuthority": {
+    "message": "Issuing authority"
+  },
+  "copyIssuingAuthority": {
+    "message": "Copy issuing authority / office"
+  },
+  "issueDate": {
+    "message": "Issue date"
+  },
   "licenseNumber": {
     "message": "Številka vozniškega dovoljenja"
   },
@@ -2190,6 +2259,18 @@
   "typeBankAccountSubtitle": {
     "message": "Banking details"
   },
+  "typePassport": {
+    "message": "Passport"
+  },
+  "passportDetails": {
+    "message": "Passport details"
+  },
+  "passportAdded": {
+    "message": "Passport added"
+  },
+  "typePassportSubtitle": {
+    "message": "Travel document"
+  },
   "typeDriversLicense": {
     "message": "License"
   },
@@ -2199,41 +2280,8 @@
   "driversLicenseDetails": {
     "message": "License details"
   },
-  "dateOfBirth": {
-    "message": "Date of birth"
-  },
-  "birthMonth": {
-    "message": "Birth month"
-  },
-  "birthDay": {
-    "message": "Birth day"
-  },
-  "birthYear": {
-    "message": "Birth year"
-  },
-  "issuingCountry": {
-    "message": "Issuing country"
-  },
   "issuingState": {
     "message": "Issuing state / province"
-  },
-  "issuingAuthority": {
-    "message": "Issuing authority"
-  },
-  "issueDate": {
-    "message": "Issue date"
-  },
-  "issueMonth": {
-    "message": "Issue month"
-  },
-  "issueDay": {
-    "message": "Issue day"
-  },
-  "issueYear": {
-    "message": "Issue year"
-  },
-  "expirationDay": {
-    "message": "Expiration day"
   },
   "licenseClass": {
     "message": "License class"
@@ -2896,18 +2944,6 @@
   },
   "biometricsFailedDesc": {
     "message": "Biometrics cannot be completed, consider using a master password or logging out. If this persists, please contact Bitwarden support."
-  },
-  "nativeMessaginPermissionErrorTitle": {
-    "message": "Dovoljenje manjka"
-  },
-  "nativeMessaginPermissionErrorDesc": {
-    "message": "Brez dovoljenja za komunikacijo z Bitwardnovo namizno aplikacijo ni mogoče uporabljati bimetričnega preverjanja v razširitvi brskalnika. Prosimo, poskusite ponovno."
-  },
-  "nativeMessaginPermissionSidebarTitle": {
-    "message": "Napaka pri zahtevku za dovoljenje"
-  },
-  "nativeMessaginPermissionSidebarDesc": {
-    "message": "This action cannot be done in the sidebar, please retry the action in the popup or popout."
   },
   "personalOwnershipSubmitError": {
     "message": "Politika podjetja določa, da ne morete shranjevati elementov v svoj osebni trezor. Spremenite lastništvo na organizacijo in izberite izmed zbirk na voljo."
@@ -5061,6 +5097,10 @@
       }
     }
   },
+  "noValueEntered": {
+    "message": "No value entered",
+    "description": "Screen reader announcement appended to a custom field's name when the field has no value entered."
+  },
   "noValuesToCopy": {
     "message": "No values to copy"
   },
@@ -6478,6 +6518,9 @@
   "searchBankAccount": {
     "message": "Search bank account"
   },
+  "searchPassport": {
+    "message": "Search passports"
+  },
   "copyAccountNumber": {
     "message": "Copy account number"
   },
@@ -6513,6 +6556,9 @@
   },
   "downloadFailed": {
     "message": "Failed to download."
+  },
+  "more": {
+    "message": "More"
   },
   "maxAccessCount": {
     "message": "Maximum access count",
@@ -6557,5 +6603,8 @@
   },
   "hideEmailPolicyInEffect": {
     "message": "Your organization requires email visibility. Uncheck \"Hide your email from viewers\" to save."
+  },
+  "errorImportingMyItemsMultiCollection": {
+    "message": "You cannot import items into My Items that are part of multiple collections"
   }
 }

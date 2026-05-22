@@ -167,6 +167,9 @@
   "copyPassportNumber": {
     "message": "Reisepassnummer kopieren"
   },
+  "copyNationalIdentificationNumber": {
+    "message": "Copy national identification number"
+  },
   "copyFirstName": {
     "message": "Vornamen kopieren"
   },
@@ -2001,11 +2004,32 @@
   "brand": {
     "message": "Marke"
   },
+  "birthDay": {
+    "message": "Birth day"
+  },
+  "birthMonth": {
+    "message": "Birth month"
+  },
+  "birthYear": {
+    "message": "Birth year"
+  },
+  "expirationDay": {
+    "message": "Expiration day"
+  },
   "expirationMonth": {
     "message": "Ablaufmonat"
   },
   "expirationYear": {
     "message": "Ablaufjahr"
+  },
+  "issueDay": {
+    "message": "Issue day"
+  },
+  "issueMonth": {
+    "message": "Issue month"
+  },
+  "issueYear": {
+    "message": "Issue year"
   },
   "monthly": {
     "message": "Monat"
@@ -2100,6 +2124,51 @@
   "passportNumber": {
     "message": "Reisepassnummer"
   },
+  "dateOfBirth": {
+    "message": "Date of birth"
+  },
+  "sex": {
+    "message": "Sex"
+  },
+  "copySex": {
+    "message": "Copy sex"
+  },
+  "birthPlace": {
+    "message": "Birth place"
+  },
+  "copyBirthPlace": {
+    "message": "Copy birth place"
+  },
+  "nationality": {
+    "message": "Nationality"
+  },
+  "copyNationality": {
+    "message": "Copy nationality"
+  },
+  "issuingCountry": {
+    "message": "Issuing country"
+  },
+  "copyIssuingCountry": {
+    "message": "Copy issuing country"
+  },
+  "passportType": {
+    "message": "Passport type"
+  },
+  "copyPassportType": {
+    "message": "Copy passport type"
+  },
+  "nationalIdentificationNumber": {
+    "message": "National identification number"
+  },
+  "issuingAuthority": {
+    "message": "Issuing authority"
+  },
+  "copyIssuingAuthority": {
+    "message": "Copy issuing authority / office"
+  },
+  "issueDate": {
+    "message": "Issue date"
+  },
   "licenseNumber": {
     "message": "Lizenznummer"
   },
@@ -2190,6 +2259,18 @@
   "typeBankAccountSubtitle": {
     "message": "Bankdaten"
   },
+  "typePassport": {
+    "message": "Passport"
+  },
+  "passportDetails": {
+    "message": "Passport details"
+  },
+  "passportAdded": {
+    "message": "Passport added"
+  },
+  "typePassportSubtitle": {
+    "message": "Travel document"
+  },
   "typeDriversLicense": {
     "message": "Führerschein"
   },
@@ -2199,41 +2280,8 @@
   "driversLicenseDetails": {
     "message": "License details"
   },
-  "dateOfBirth": {
-    "message": "Date of birth"
-  },
-  "birthMonth": {
-    "message": "Birth month"
-  },
-  "birthDay": {
-    "message": "Birth day"
-  },
-  "birthYear": {
-    "message": "Birth year"
-  },
-  "issuingCountry": {
-    "message": "Issuing country"
-  },
   "issuingState": {
     "message": "Issuing state / province"
-  },
-  "issuingAuthority": {
-    "message": "Issuing authority"
-  },
-  "issueDate": {
-    "message": "Issue date"
-  },
-  "issueMonth": {
-    "message": "Issue month"
-  },
-  "issueDay": {
-    "message": "Issue day"
-  },
-  "issueYear": {
-    "message": "Issue year"
-  },
-  "expirationDay": {
-    "message": "Expiration day"
   },
   "licenseClass": {
     "message": "License class"
@@ -2896,18 +2944,6 @@
   },
   "biometricsFailedDesc": {
     "message": "Die biometrische Verifizierung kann nicht abgeschlossen werden. Versuch es mit dem Master-Passwort oder melde dich ab. Sollte das Problem weiterhin bestehen, kontaktiere bitte den Bitwarden-Support."
-  },
-  "nativeMessaginPermissionErrorTitle": {
-    "message": "Berechtigung nicht erteilt"
-  },
-  "nativeMessaginPermissionErrorDesc": {
-    "message": "Ohne die Berechtigung zur Kommunikation mit der Bitwarden Desktop-Anwendung können wir keine Biometrie in der Browser-Erweiterung anbieten. Bitte versuche es erneut."
-  },
-  "nativeMessaginPermissionSidebarTitle": {
-    "message": "Fehler bei der Berechtigungsanfrage"
-  },
-  "nativeMessaginPermissionSidebarDesc": {
-    "message": "Diese Aktion kann in der Sidebar nicht durchgeführt werden, bitte versuche die Aktion im Popup oder Popout erneut auszuführen."
   },
   "personalOwnershipSubmitError": {
     "message": "Aufgrund einer Unternehmensrichtlinie darfst du keine Einträge in deinem persönlichen Tresor speichern. Ändere die Eigentümer-Option in eine Organisation und wähle aus den verfügbaren Sammlungen."
@@ -5061,6 +5097,10 @@
       }
     }
   },
+  "noValueEntered": {
+    "message": "No value entered",
+    "description": "Screen reader announcement appended to a custom field's name when the field has no value entered."
+  },
   "noValuesToCopy": {
     "message": "Keine Werte zum Kopieren"
   },
@@ -6478,6 +6518,9 @@
   "searchBankAccount": {
     "message": "Bankkonto suchen"
   },
+  "searchPassport": {
+    "message": "Search passports"
+  },
   "copyAccountNumber": {
     "message": "Kontonummer kopieren"
   },
@@ -6513,6 +6556,9 @@
   },
   "downloadFailed": {
     "message": "Download fehlgeschlagen."
+  },
+  "more": {
+    "message": "More"
   },
   "maxAccessCount": {
     "message": "Maximale Zugriffsanzahl",
@@ -6557,5 +6603,8 @@
   },
   "hideEmailPolicyInEffect": {
     "message": "Deine Organisation muss deine E-Mail-Adresse sehen können. Deaktiviere \"Deine E-Mail-Adresse vor Betrachtern verbergen\", um zu speichern."
+  },
+  "errorImportingMyItemsMultiCollection": {
+    "message": "You cannot import items into My Items that are part of multiple collections"
   }
 }

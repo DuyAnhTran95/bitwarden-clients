@@ -167,14 +167,17 @@
   "copyPassportNumber": {
     "message": "Pasport nömrəsini kopyala"
   },
+  "copyNationalIdentificationNumber": {
+    "message": "Şəxsiyyət vəsiqəsi nömrəsini kopyala"
+  },
   "copyFirstName": {
-    "message": "Copy first name"
+    "message": "Adı kopyala"
   },
   "copyMiddleName": {
-    "message": "Copy middle name"
+    "message": "Orta adı kopyala"
   },
   "copyLastName": {
-    "message": "Copy last name"
+    "message": "Soyadı kopyala"
   },
   "copyLicenseNumber": {
     "message": "Lisenziya nömrəsini kopyala"
@@ -718,20 +721,20 @@
     "message": "Uzantını qiymətləndir"
   },
   "troubleshooting": {
-    "message": "Troubleshooting"
+    "message": "Problemlərin aradan qaldırılması"
   },
   "experiencingAnIssue": {
-    "message": "Experiencing an issue?"
+    "message": "Problemlə üzləşmisiniz?"
   },
   "downloadDiagnosticReportWith": {
-    "message": "Download then share the diagnostic report with"
+    "message": "Diaqnostika hesabatını endirib paylaş"
   },
   "bitwardenSupport": {
-    "message": "Bitwarden support",
+    "message": "Bitwarden dəstək",
     "description": "Link text following the troubleshooting description sentence. 'Bitwarden' should not be translated."
   },
   "download": {
-    "message": "Download"
+    "message": "Endir"
   },
   "browserNotSupportClipboard": {
     "message": "Veb brauzeriniz lövhəyə kopyalamağı dəstəkləmir. Əvəzində əllə kopyalayın."
@@ -2001,11 +2004,32 @@
   "brand": {
     "message": "Brend"
   },
+  "birthDay": {
+    "message": "Doğum günü"
+  },
+  "birthMonth": {
+    "message": "Doğum ayı"
+  },
+  "birthYear": {
+    "message": "Doğum ili"
+  },
+  "expirationDay": {
+    "message": "Bitmə günü"
+  },
   "expirationMonth": {
     "message": "Son istifadə ayı"
   },
   "expirationYear": {
     "message": "Son istifadə ili"
+  },
+  "issueDay": {
+    "message": "Təqdim edilmə günü"
+  },
+  "issueMonth": {
+    "message": "Təqdim edilmə ayı"
+  },
+  "issueYear": {
+    "message": "Təqdim edilmə ili"
   },
   "monthly": {
     "message": "ay"
@@ -2100,6 +2124,51 @@
   "passportNumber": {
     "message": "Pasport nömrəsi"
   },
+  "dateOfBirth": {
+    "message": "Doğum tarixi"
+  },
+  "sex": {
+    "message": "Cinsi"
+  },
+  "copySex": {
+    "message": "Cinsi kopyala"
+  },
+  "birthPlace": {
+    "message": "Doğum yeri"
+  },
+  "copyBirthPlace": {
+    "message": "Doğum yerini kopyala"
+  },
+  "nationality": {
+    "message": "Milliyəti"
+  },
+  "copyNationality": {
+    "message": "Milliyətini kopyala"
+  },
+  "issuingCountry": {
+    "message": "Təqdim edən ölkə"
+  },
+  "copyIssuingCountry": {
+    "message": "Təqdim edən ölkəni kopyala"
+  },
+  "passportType": {
+    "message": "Pasport növü"
+  },
+  "copyPassportType": {
+    "message": "Pasport növünü kopyala"
+  },
+  "nationalIdentificationNumber": {
+    "message": "Şəxsiyyət vəsiqəsi nömrəsi"
+  },
+  "issuingAuthority": {
+    "message": "Təqdim edən orqan"
+  },
+  "copyIssuingAuthority": {
+    "message": "Təqdim edən orqanı/ofisi kopyala"
+  },
+  "issueDate": {
+    "message": "Təqdim edilmə tarixi"
+  },
   "licenseNumber": {
     "message": "Lisenziya nömrəsi"
   },
@@ -2190,53 +2259,32 @@
   "typeBankAccountSubtitle": {
     "message": "Bank məlumatları"
   },
+  "typePassport": {
+    "message": "Pasport"
+  },
+  "passportDetails": {
+    "message": "Pasport məlumatları"
+  },
+  "passportAdded": {
+    "message": "Pasport əlavə olundu"
+  },
+  "typePassportSubtitle": {
+    "message": "Səyahət sənədi"
+  },
   "typeDriversLicense": {
-    "message": "License"
+    "message": "Sür. vəsiqəsi"
   },
   "typeDriversLicenseSubtitle": {
-    "message": "Drivers license or ID"
+    "message": "Sürücülük vəsiqəsi və ya kimlik"
   },
   "driversLicenseDetails": {
-    "message": "License details"
-  },
-  "dateOfBirth": {
-    "message": "Date of birth"
-  },
-  "birthMonth": {
-    "message": "Birth month"
-  },
-  "birthDay": {
-    "message": "Birth day"
-  },
-  "birthYear": {
-    "message": "Birth year"
-  },
-  "issuingCountry": {
-    "message": "Issuing country"
+    "message": "Sür. vəs. məlumatları"
   },
   "issuingState": {
-    "message": "Issuing state / province"
-  },
-  "issuingAuthority": {
-    "message": "Issuing authority"
-  },
-  "issueDate": {
-    "message": "Issue date"
-  },
-  "issueMonth": {
-    "message": "Issue month"
-  },
-  "issueDay": {
-    "message": "Issue day"
-  },
-  "issueYear": {
-    "message": "Issue year"
-  },
-  "expirationDay": {
-    "message": "Expiration day"
+    "message": "Təqdim edən ştat/əyalət"
   },
   "licenseClass": {
-    "message": "License class"
+    "message": "Sür. vəs. sinifi"
   },
   "newItemHeaderLogin": {
     "message": "Yeni giriş",
@@ -2271,11 +2319,11 @@
     "description": "Header for new passport item type"
   },
   "newItemHeaderTextSendV2": {
-    "message": "New text",
+    "message": "Yeni mətn",
     "description": "Header for new text send"
   },
   "newItemHeaderFileSendV2": {
-    "message": "New file",
+    "message": "Yeni fayl",
     "description": "Header for new file send"
   },
   "editItemHeaderLogin": {
@@ -2303,7 +2351,7 @@
     "description": "Header for edit bank account item type"
   },
   "editItemHeaderLicense": {
-    "message": "Edit license",
+    "message": "Sür. vəsiqəsinə düzəliş",
     "description": "Header for edit license item type"
   },
   "editItemHeaderPassport": {
@@ -2311,11 +2359,11 @@
     "description": "Header for edit passport item type"
   },
   "editItemHeaderTextSendV2": {
-    "message": "Edit text",
+    "message": "Mətnə düzəliş",
     "description": "Header for edit text send"
   },
   "editItemHeaderFileSendV2": {
-    "message": "Edit file",
+    "message": "Fayla düzəliş",
     "description": "Header for edit file send"
   },
   "viewItemHeaderLogin": {
@@ -2343,7 +2391,7 @@
     "description": "Header for view bank account item type"
   },
   "viewItemHeaderLicense": {
-    "message": "View license",
+    "message": "Sür. vəsiqəsinə bax",
     "description": "Header for view license item type"
   },
   "viewItemHeaderPassport": {
@@ -2896,18 +2944,6 @@
   },
   "biometricsFailedDesc": {
     "message": "Biometriklər tamamlana bilmir, ana parol istifadə etməyi düşünün və ya çıxış edin. Bu problem davam edərsə, lütfən Bitwarden dəstəyi ilə əlaqə saxlayın."
-  },
-  "nativeMessaginPermissionErrorTitle": {
-    "message": "İcazə verilmədi"
-  },
-  "nativeMessaginPermissionErrorDesc": {
-    "message": "Bitwarden masaüstü tətbiqi ilə əlaqə qurma icazəsi olmadan, brauzer uzantısında biometrikləri təmin edə bilmirik. Lütfən yenidən sınayın."
-  },
-  "nativeMessaginPermissionSidebarTitle": {
-    "message": "İcazə tələb xətası"
-  },
-  "nativeMessaginPermissionSidebarDesc": {
-    "message": "Bu əməliyyat yan çubuqda icra edilə bilməz. Lütfən açılan pəncərədə yenidən sınayın."
   },
   "personalOwnershipSubmitError": {
     "message": "Müəssisə Siyasətinə görə, elementləri fərdi seyfinizdə saxlamağınız məhdudlaşdırılıb. Sahiblik seçimini təşkilat olaraq dəyişdirin və mövcud kolleksiyalar arasından seçim edin."
@@ -3537,10 +3573,10 @@
     "message": "Təşkilat seyfini xaricə köçürmə"
   },
   "exportingIndividualVaultScopeDescription": {
-    "message": "Only items in your individual vault will export."
+    "message": "Yalnız fərdi seyfinizdəki elementlər xaricə köçürüləcək."
   },
   "exportingOrganizationVaultScopeDescription": {
-    "message": "Only items associated with the $ORGANIZATION$ vault will export. Items in individual vaults will not.",
+    "message": "Yalnız $ORGANIZATION$ seyfi ilə əlaqələndirilmiş elementlər xaricə köçürüləcək. Fərdi seyfinizdə elementlər deyil.",
     "placeholders": {
       "organization": {
         "content": "$1",
@@ -4636,10 +4672,10 @@
     "message": "Seyf verilərinizi xaricə köçürərkən bir xəta baş verdi"
   },
   "exportSuccessSkippedAttachment": {
-    "message": "1 corrupted attachment was skipped during export. All other vault data and attachments exported successfully."
+    "message": "Xaricə köçürmə zamanı 1 zədəli qoşma ötürüldü. Digər bütün seyf veriləri və qoşmaları uğurla xaricə köçürüldü."
   },
   "exportSuccessSkippedAttachments": {
-    "message": "$COUNT$ corrupted attachments were skipped during export. All other vault data and attachments exported successfully.",
+    "message": "Xaricə köçürmə zamanı $COUNT$ zədəli qoşma ötürüldü. Digər bütün seyf veriləri və qoşmaları uğurla xaricə köçürüldü.",
     "placeholders": {
       "count": {
         "content": "$1",
@@ -5060,6 +5096,10 @@
         "example": "Login Item"
       }
     }
+  },
+  "noValueEntered": {
+    "message": "Heç bir dəyər daxil edilməyib",
+    "description": "Screen reader announcement appended to a custom field's name when the field has no value entered."
   },
   "noValuesToCopy": {
     "message": "Kopyalanacaq dəyər yoxdur"
@@ -6424,22 +6464,22 @@
     "message": "İstifadəçi doğrulaması uğursuz oldu."
   },
   "enterMonth": {
-    "message": "Enter month."
+    "message": "Ayı daxil edin."
   },
   "enterDay": {
-    "message": "Enter day."
+    "message": "Günü daxil edin."
   },
   "enterYear": {
-    "message": "Enter year."
+    "message": "İli daxil edin."
   },
   "invalidDay": {
-    "message": "Enter a valid day."
+    "message": "Yararlı bir gün daxil edin."
   },
   "invalidYear": {
-    "message": "Enter a valid year."
+    "message": "Yararlı bir il daxil edin."
   },
   "searchDriversLicense": {
-    "message": "Search licenses"
+    "message": "Sür. vəsiqəsi axtar"
   },
   "bankName": {
     "message": "Bank adı"
@@ -6478,6 +6518,9 @@
   "searchBankAccount": {
     "message": "Bank hesabını axtar"
   },
+  "searchPassport": {
+    "message": "Pasport axtar"
+  },
   "copyAccountNumber": {
     "message": "Hesab nömrəsini kopyala"
   },
@@ -6514,28 +6557,31 @@
   "downloadFailed": {
     "message": "Endirmə uğursuz oldu."
   },
+  "more": {
+    "message": "More"
+  },
   "maxAccessCount": {
-    "message": "Maximum access count",
+    "message": "Maksimum erişim sayı",
     "description": "This text will be displayed after a Send has been accessed the maximum amount of times."
   },
   "hideMyEmail": {
-    "message": "Hide my email address from recipients."
+    "message": "E-poçt ünvanımı alıcılardan gizlət."
   },
   "viewTextSendHeader": {
-    "message": "View text"
+    "message": "Mətnə bax"
   },
   "viewFileSendHeader": {
-    "message": "View file"
+    "message": "Fayla bax"
   },
   "sendCreated": {
-    "message": "Send created",
+    "message": "Send yaradıldı",
     "description": "'Send' is a noun and the name of a feature called 'Bitwarden Send'. It should not be translated."
   },
   "numericInputError": {
-    "message": "Input must be numeric"
+    "message": "Rəqəmsal daxil edin"
   },
   "integerInputError": {
-    "message": "Input must be a whole number"
+    "message": "Tam ədəd daxil edin"
   },
   "sideNavigation": {
     "message": "Yan naviqasiya"
@@ -6557,5 +6603,8 @@
   },
   "hideEmailPolicyInEffect": {
     "message": "Təşkilatınızın e-poçtun görünməsini tələb edir. Saxlamaq üçün \"E-poçtunuzu baxanlardan gizlədin\" seçimini ləğv edin."
+  },
+  "errorImportingMyItemsMultiCollection": {
+    "message": "Birdən çox kolleksiyanın parçası olan elementləri \"Elementlərim\"ə köçürə bilməzsiniz"
   }
 }

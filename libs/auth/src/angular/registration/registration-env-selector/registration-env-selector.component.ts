@@ -35,12 +35,12 @@ import { SelfHostedEnvConfigDialogComponent } from "../../self-hosted-env-config
 export class RegistrationEnvSelectorComponent implements OnInit, OnDestroy {
   // FIXME(https://bitwarden.atlassian.net/browse/CL-903): Migrate to Signals
   // eslint-disable-next-line @angular-eslint/prefer-output-emitter-ref
-  @Output() selectedRegionChange = new EventEmitter<RegionConfig | Region.SelfHosted | null>();
+  @Output() selectedRegionChange = new EventEmitter<RegionConfig | "Self-hosted" | null>();
 
   ServerEnvironmentType = Region;
 
   formGroup = this.formBuilder.group({
-    selectedRegion: [null as RegionConfig | Region.SelfHosted | null, Validators.required],
+    selectedRegion: [null as RegionConfig | "Self-hosted" | null, Validators.required],
   });
 
   get selectedRegion(): FormControl {
@@ -49,7 +49,7 @@ export class RegistrationEnvSelectorComponent implements OnInit, OnDestroy {
 
   availableRegionConfigs: RegionConfig[] = this.environmentService.availableRegions();
 
-  private selectedRegionFromEnv: RegionConfig | Region.SelfHosted;
+  private selectedRegionFromEnv: RegionConfig | "Self-hosted";
 
   hideEnvSelector = false;
   isDesktopOrBrowserExtension = false;
@@ -96,7 +96,7 @@ export class RegistrationEnvSelectorComponent implements OnInit, OnDestroy {
 
           return regionConfig;
         }),
-        tap((selectedRegionFromEnv: RegionConfig | Region.SelfHosted) => {
+        tap((selectedRegionFromEnv: RegionConfig | "Self-hosted") => {
           // Only set the value if it is different from the current value.
           if (selectedRegionFromEnv !== this.selectedRegion.value) {
             // Don't emit to avoid triggering the selectedRegion valueChanges subscription
@@ -126,8 +126,8 @@ export class RegistrationEnvSelectorComponent implements OnInit, OnDestroy {
         pairwise(),
         switchMap(
           ([prevSelectedRegion, selectedRegion]: [
-            RegionConfig | Region.SelfHosted | null,
-            RegionConfig | Region.SelfHosted | null,
+            RegionConfig | "Self-hosted" | null,
+            RegionConfig | "Self-hosted" | null,
           ]) => {
             if (selectedRegion === null) {
               this.selectedRegionChange.emit(selectedRegion);
@@ -149,7 +149,7 @@ export class RegistrationEnvSelectorComponent implements OnInit, OnDestroy {
 
   private handleSelfHostedEnvConfigDialogResult(
     result: boolean | undefined,
-    prevSelectedRegion: RegionConfig | Region.SelfHosted | null,
+    prevSelectedRegion: RegionConfig | "Self-hosted" | null,
   ) {
     if (result === true) {
       this.selectedRegionChange.emit(Region.SelfHosted);

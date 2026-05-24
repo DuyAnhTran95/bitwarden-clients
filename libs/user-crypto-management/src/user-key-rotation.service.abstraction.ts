@@ -1,4 +1,4 @@
-import { KeyRotationMethod, PublicKey } from "@bitwarden/sdk-internal";
+import { KeyRotationMethod, PublicKey, UpgradeTokenAction } from "@bitwarden/sdk-internal";
 import { UserId } from "@bitwarden/user-core";
 
 /**
@@ -40,8 +40,8 @@ export abstract class UserKeyRotationService {
    */
   abstract rotateUserKey(
     keyRotationMethod: KeyRotationMethod,
+    upgradeTokenAction: UpgradeTokenAction,
     userId: UserId,
-    allowNoLogoutUpgrade: boolean,
   ): Promise<boolean>;
 
   /**

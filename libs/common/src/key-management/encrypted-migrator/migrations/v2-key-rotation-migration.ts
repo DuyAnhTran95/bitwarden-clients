@@ -114,8 +114,8 @@ export class V2KeyRotationMigration implements EncryptedMigration {
     this.logService.info(`[V2KeyRotationMigration] Rotating user key for user ${userId}`);
     const success = await this.userKeyRotationService.rotateUserKey(
       { Password: { password: masterPassword } },
+      "CreateIfNeeded",
       userId,
-      true,
     );
     this.logService.info(
       `[V2KeyRotationMigration] Performing second full sync after v2 rotation for user ${userId}`,

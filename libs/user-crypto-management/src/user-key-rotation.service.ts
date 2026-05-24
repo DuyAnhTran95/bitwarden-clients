@@ -13,6 +13,7 @@ import {
   KeyRotationMethod,
   PasswordChangeAndRotateUserKeysRequest,
   RotateUserKeysRequest,
+  UpgradeTokenAction,
 } from "@bitwarden/sdk-internal";
 import { UserId } from "@bitwarden/user-core";
 
@@ -75,8 +76,8 @@ export class DefaultUserKeyRotationService implements UserKeyRotationService {
 
   async rotateUserKey(
     keyRotationMethod: KeyRotationMethod,
+    upgradeTokenAction: UpgradeTokenAction,
     userId: UserId,
-    allowNoLogoutUpgrade: boolean,
   ): Promise<boolean> {
     const { wasTrustDenied, trustedOrganizationPublicKeys, trustedEmergencyAccessUserPublicKeys } =
       await this.verifyTrust(userId);
@@ -100,7 +101,7 @@ export class DefaultUserKeyRotationService implements UserKeyRotationService {
             key_rotation_method: keyRotationMethod,
             trusted_emergency_access_public_keys: trustedEmergencyAccessUserPublicKeys,
             trusted_organization_public_keys: trustedOrganizationPublicKeys,
-            upgrade_token_action: allowNoLogoutUpgrade ? "CreateIfNeeded" : "None",
+            upgrade_token_action: upgradeTokenAction,
           } as RotateUserKeysRequest);
           return true;
         }),

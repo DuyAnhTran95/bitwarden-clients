@@ -17,6 +17,7 @@ import {
   throwIfEmpty,
   firstValueFrom,
   debounceTime,
+  filter,
 } from "rxjs";
 
 import { FeatureFlag } from "@bitwarden/common/enums/feature-flag.enum";
@@ -138,6 +139,13 @@ export class DefaultSdkService implements SdkService {
         return this.internalClient$(userId);
       }),
       takeWhile((client) => client !== undefined, false),
+      // Filter out clients that have been marked for disposal. This can happen in the
+      // race window where `internalClient$`'s `combineLatest` re-emits (e.g. during
+      // unlock when org keys / user key re-emit): the previous inner Observable's
+      // cleanup marks the old Rc for disposal before the new client finishes its
+      // async initialization, leaving the shared ReplaySubject holding a disposed
+      // reference that would otherwise throw on `take()`.
+      filter((client) => !client.isMarkedForDisposal),
       throwIfEmpty(() => new UserNotLoggedInError(userId)),
     );
   }

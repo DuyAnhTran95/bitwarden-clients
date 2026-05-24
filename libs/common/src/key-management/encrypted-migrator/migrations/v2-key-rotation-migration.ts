@@ -2,15 +2,14 @@ import { firstValueFrom } from "rxjs";
 
 import { assertNonNullish } from "@bitwarden/common/auth/utils";
 import { SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.service";
+import { EncryptionType } from "@bitwarden/common/platform/enums";
 // eslint-disable-next-line no-restricted-imports
 import { KeyService } from "@bitwarden/key-management";
 import { LogService } from "@bitwarden/logging";
-import { CryptoClient } from "@bitwarden/sdk-internal";
 import { UserKeyRotationServiceAbstraction } from "@bitwarden/user-crypto-management";
 
 import { FeatureFlag } from "../../../enums/feature-flag.enum";
 import { ConfigService } from "../../../platform/abstractions/config/config.service";
-import { SdkLoadService } from "../../../platform/abstractions/sdk/sdk-load.service";
 import { SyncService } from "../../../platform/sync";
 import { UserId } from "../../../types/guid";
 import { CipherService } from "../../../vault/abstractions/cipher.service";
@@ -18,7 +17,6 @@ import { MasterPasswordServiceAbstraction } from "../../master-password/abstract
 import { withPasswordManagerSdk } from "../../utils";
 
 import { EncryptedMigration, MigrationRequirement } from "./encrypted-migration";
-import { EncryptionType } from "@bitwarden/common/platform/enums";
 
 /**
  * Migrates users that are on v1 encryption to v2 encryption by performing
@@ -130,7 +128,7 @@ export class V2KeyRotationMigration implements EncryptedMigration {
     if (userKey == null) {
       return false;
     }
-    return userKey.inner().type === EncryptionType.CoseEncrypt0;
+    return userKey.inner().type !== EncryptionType.CoseEncrypt0;
   }
 
   private async userEnrolledInAccountRecovery(userId: UserId): Promise<boolean> {

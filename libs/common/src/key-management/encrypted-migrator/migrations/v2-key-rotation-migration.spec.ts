@@ -5,7 +5,6 @@ import { SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.serv
 // eslint-disable-next-line no-restricted-imports
 import { KeyService } from "@bitwarden/key-management";
 import { LogService } from "@bitwarden/logging";
-import { CryptoClient } from "@bitwarden/sdk-internal";
 import { UserKeyRotationServiceAbstraction } from "@bitwarden/user-crypto-management";
 
 import { FeatureFlag } from "../../../enums/feature-flag.enum";
@@ -22,16 +21,6 @@ import { MasterPasswordServiceAbstraction } from "../../master-password/abstract
 
 import { V2KeyRotationMigration } from "./v2-key-rotation-migration";
 
-jest.mock("@bitwarden/sdk-internal", () => ({
-  CryptoClient: {
-    get_key_id_for_symmetric_key: jest.fn(),
-  },
-}));
-
-jest.mock("@bitwarden/common/platform/abstractions/sdk/sdk-load.service", () => ({
-  SdkLoadService: { Ready: Promise.resolve() },
-}));
-
 describe("V2KeyRotationMigration", () => {
   const mockKeyService = mock<KeyService>();
   const mockUserKeyRotationService = mock<UserKeyRotationServiceAbstraction>();
@@ -47,11 +36,7 @@ describe("V2KeyRotationMigration", () => {
   const mockUserId = "00000000-0000-0000-0000-000000000000" as UserId;
   const mockMasterPassword = "masterPassword";
   const mockUserKey = new SymmetricCryptoKey(new Uint8Array(64)) as UserKey;
-  const v2KeyId = new Uint8Array([1, 2, 3, 4]);
-
-  const setKeyIdForKey = (keyId: Uint8Array | null) => {
-    ((CryptoClient as any).get_key_id_for_symmetric_key as jest.Mock).mockReturnValue(keyId);
-  };
+  const mockUserKeyV2 = new SymmetricCryptoKey(new Uint8Array(75)) as UserKey;
 
   const makeCipherWithAttachments = (attachments: AttachmentView[]): CipherView => {
     const cipher = new CipherView();
@@ -103,7 +88,6 @@ describe("V2KeyRotationMigration", () => {
     mockConfigService.getFeatureFlag.mockResolvedValue(true);
     mockMasterPasswordService.userHasMasterPassword.mockResolvedValue(true);
     mockKeyService.userKey$.mockReturnValue(of(mockUserKey));
-    setKeyIdForKey(null);
     mockCipherService.failedToDecryptCiphers$.mockReturnValue(of([]));
     mockCipherService.cipherViews$.mockReturnValue(of([]));
     arrangeSdkResult();
@@ -153,8 +137,7 @@ describe("V2KeyRotationMigration", () => {
 
     it("returns 'noMigrationNeeded' when user key is already v2", async () => {
       mockConfigService.getFeatureFlag.mockResolvedValue(true);
-      mockKeyService.userKey$.mockReturnValue(of(mockUserKey));
-      setKeyIdForKey(v2KeyId);
+      mockKeyService.userKey$.mockReturnValue(of(mockUserKeyV2));
 
       const result = await sut.needsMigration(mockUserId);
 
@@ -174,9 +157,9 @@ describe("V2KeyRotationMigration", () => {
 
     it("returns 'noMigrationNeeded' when post-sync the user has been upgraded to v2 elsewhere", async () => {
       arrangeHappyPath();
-      ((CryptoClient as any).get_key_id_for_symmetric_key as jest.Mock)
-        .mockReturnValueOnce(null)
-        .mockReturnValueOnce(v2KeyId);
+      mockKeyService.userKey$
+        .mockReturnValueOnce(of(mockUserKey))
+        .mockReturnValueOnce(of(mockUserKeyV2));
 
       const result = await sut.needsMigration(mockUserId);
 

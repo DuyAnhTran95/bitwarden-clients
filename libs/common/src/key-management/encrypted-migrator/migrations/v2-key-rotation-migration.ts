@@ -21,18 +21,8 @@ import { MasterPasswordServiceAbstraction } from "../../master-password/abstract
 import { EncryptedMigration, MigrationRequirement } from "./encrypted-migration";
 
 /**
- * @internal
- * Migrates users still on a v1 user key to a v2 user key by performing a
- * password-based key rotation via the user crypto management module. A full
- * sync is run immediately before rotation so the rotation operates against the
- * latest server state.
- *
- * The auto-migration is intentionally conservative: it only runs for users
- * whose rotation can complete silently with just the master password. Any user
- * whose rotation would require additional interactive trust prompts (account
- * recovery enrollment, granted emergency access) or whose vault state would
- * make rotation lossy (v1 attachments, ciphers that fail to decrypt, missing
- * private key) is skipped.
+ * Migrates users that are on v1 encryption to v2 encryption by performing
+ * a key rotation.
  */
 export class V2KeyRotationMigration implements EncryptedMigration {
   constructor(
@@ -50,16 +40,52 @@ export class V2KeyRotationMigration implements EncryptedMigration {
 
   async needsMigration(userId: UserId): Promise<MigrationRequirement> {
     assertNonNullish(userId, "userId");
-
     if (!(await this.configService.getFeatureFlag(FeatureFlag.ForceUpgradeV2Encryption))) {
       return "noMigrationNeeded";
     }
 
+    if (!(await this.userKeyIsV1(userId))) {
+      return "noMigrationNeeded";
+    }
+
+    this.logService.info("checking for v1 attachments that would be lost in rotation");
+    if (await this.userHasV1Attachments(userId)) {
+      this.logService.info(`[V2KeyRotationMigration] User ${userId} has v1 attachments. Skipping.`);
+      return "noMigrationNeeded";
+    }
+
+    if (await this.userHasCorruptedPrivateKey(userId)) {
+      this.logService.info(
+        `[V2KeyRotationMigration] User ${userId} has a missing or corrupted private key. Skipping.`,
+      );
+      return "noMigrationNeeded";
+    }
+
+    if (await this.userHasCorruptCiphers(userId)) {
+      this.logService.info(
+        `[V2KeyRotationMigration] User ${userId} has corrupt ciphers that cannot be decrypted. Skipping.`,
+      );
+      return "noMigrationNeeded";
+    }
+
+    // Currently only supported for users with a master password
     if (!(await this.masterPasswordService.userHasMasterPassword(userId))) {
       return "noMigrationNeeded";
     }
 
-    if (!(await this.userKeyIsV1(userId))) {
+    // Currently not supported for users that have account recovery enabled
+    if (await this.userEnrolledInAccountRecovery(userId)) {
+      this.logService.info(
+        `[V2KeyRotationMigration] User ${userId} is enrolled in account recovery. Skipping.`,
+      );
+      return "noMigrationNeeded";
+    }
+
+    // Currently not supported for users that have emergency access enabled
+    if (await this.userHasGrantedEmergencyAccess(userId)) {
+      this.logService.info(
+        `[V2KeyRotationMigration] User ${userId} has granted emergency access. Skipping.`,
+      );
       return "noMigrationNeeded";
     }
 
@@ -74,51 +100,11 @@ export class V2KeyRotationMigration implements EncryptedMigration {
       return "noMigrationNeeded";
     }
 
-    if (await this.userEnrolledInAccountRecovery(userId)) {
-      this.logService.info(
-        `[V2KeyRotationMigration] User ${userId} is enrolled in account recovery. Skipping.`,
-      );
-      return "noMigrationNeeded";
-    }
-
-    if (await this.userHasGrantedEmergencyAccess(userId)) {
-      this.logService.info(
-        `[V2KeyRotationMigration] User ${userId} has granted emergency access. Skipping.`,
-      );
-      return "noMigrationNeeded";
-    }
-
-    this.logService.info(
-      "checking for corrupted keys or attachments that would cause rotation to be lossy",
-    );
-    if (await this.userHasCorruptedPrivateKey(userId)) {
-      this.logService.info(
-        `[V2KeyRotationMigration] User ${userId} has a missing or corrupted private key. Skipping.`,
-      );
-      return "noMigrationNeeded";
-    }
-
-    this.logService.info("checking for corrupted ciphers that would cause rotation to be lossy");
-    // if (await this.userHasCorruptedCiphers(userId)) {
-    //   this.logService.info(
-    //     `[V2KeyRotationMigration] User ${userId} has ciphers that failed to decrypt. Skipping.`,
-    //   );
-    //   return "noMigrationNeeded";
-    // }
-
-    this.logService.info("checking for v1 attachments that would be lost in rotation");
-    if (await this.userHasV1Attachments(userId)) {
-      this.logService.info(`[V2KeyRotationMigration] User ${userId} has v1 attachments. Skipping.`);
-      return "noMigrationNeeded";
-    }
-
-    this.logService.info(`User ${userId} is eligible for v2 key rotation migration.`);
     return "needsMigrationWithMasterPassword";
   }
 
   async runMigrations(userId: UserId, masterPassword: string | null): Promise<void> {
     assertNonNullish(userId, "userId");
-    assertNonNullish(masterPassword, "masterPassword");
 
     this.logService.info(
       `[V2KeyRotationMigration] Performing full sync before v2 rotation for user ${userId}`,
@@ -186,5 +172,10 @@ export class V2KeyRotationMigration implements EncryptedMigration {
   private async userHasV1Attachments(userId: UserId): Promise<boolean> {
     const ciphers = await firstValueFrom(this.cipherService.cipherViews$(userId));
     return ciphers.some((c) => c.attachments?.some((a) => a.isLegacyAttachment()));
+  }
+
+  private async userHasCorruptCiphers(userId: UserId): Promise<boolean> {
+    const ciphers = await firstValueFrom(this.cipherService.failedToDecryptCiphers$(userId));
+    return ciphers.length > 0;
   }
 }

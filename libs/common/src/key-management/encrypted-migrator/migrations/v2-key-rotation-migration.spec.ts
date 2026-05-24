@@ -1,7 +1,8 @@
 import { mock } from "jest-mock-extended";
 import { of } from "rxjs";
 
-// eslint-disable-next-line no-restricted-imports
+ 
+import { SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.service";
 import { KeyService } from "@bitwarden/key-management";
 import { LogService } from "@bitwarden/logging";
 import { CryptoClient } from "@bitwarden/sdk-internal";
@@ -23,7 +24,6 @@ import { EncString } from "../../crypto/models/enc-string";
 import { MasterPasswordServiceAbstraction } from "../../master-password/abstractions/master-password.service.abstraction";
 
 import { V2KeyRotationMigration } from "./v2-key-rotation-migration";
-import { SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.service";
 
 jest.mock("@bitwarden/sdk-internal", () => ({
   CryptoClient: {

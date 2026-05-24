@@ -1,7 +1,10 @@
-import { UserId } from "@bitwarden/user-core";
 import { firstValueFrom, map, Observable } from "rxjs";
-import { SdkService } from "../platform/abstractions/sdk/sdk.service";
+
 import { PasswordManagerClient } from "@bitwarden/sdk-internal";
+import { UserId } from "@bitwarden/user-core";
+
+import { SdkService } from "../platform/abstractions/sdk/sdk.service";
+
 
 export async function firstValueFromOrThrow<T>(
   value: Observable<T | null>,
@@ -36,4 +39,3 @@ export async function withPasswordManagerSdk<TResult>(
     ),
   );
 }
-

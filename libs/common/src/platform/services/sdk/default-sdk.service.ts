@@ -21,6 +21,7 @@ import {
 
 import { FeatureFlag } from "@bitwarden/common/enums/feature-flag.enum";
 import { JsWasmStateBridge } from "@bitwarden/common/key-management/state-bridge";
+import { V2UpgradeTokenStateService } from "@bitwarden/common/key-management/upgrade-token/abstractions/v2-upgrade-token-state.service.abstraction";
 import { ConfigService } from "@bitwarden/common/platform/abstractions/config/config.service";
 import { UserKey } from "@bitwarden/common/types/key";
 // This import has been flagged as unallowed for this class. It may be involved in a circular dependency loop.
@@ -56,7 +57,6 @@ import { Rc } from "../../misc/reference-counting/rc";
 import { StateProvider } from "../../state";
 
 import { initializeClientManagedState } from "./client-managed-state";
-import { V2UpgradeTokenStateService } from "@bitwarden/common/key-management/upgrade-token/abstractions/v2-upgrade-token-state.service.abstraction";
 
 // A symbol that represents an overridden client that is explicitly set to undefined,
 // blocking the creation of an internal client for that user.
@@ -180,7 +180,9 @@ export class DefaultSdkService implements SdkService {
     const orgKeys$ = this.keyService.encryptedOrgKeys$(userId).pipe(
       distinctUntilChanged(compareValues), // The upstream observable emits different objects with the same values
     );
-    const v2UpgradeToken$ = this.v2UpgradeTokenStateService.v2UpgradeToken$(userId).pipe(distinctUntilChanged());
+    const v2UpgradeToken$ = this.v2UpgradeTokenStateService
+      .v2UpgradeToken$(userId)
+      .pipe(distinctUntilChanged());
 
     const client$ = combineLatest([
       this.environmentService.getEnvironment$(userId),
@@ -195,53 +197,63 @@ export class DefaultSdkService implements SdkService {
       // Do not emit when multiple state values are written in quick succession
       debounceTime(100),
       // switchMap is required to allow the clean-up logic to be executed when `combineLatest` emits a new value.
-      switchMap(([env, account, kdfParams, accountCryptographicState, userKey, orgKeys, v2UpgradeToken]) => {
-        // Create our own observable to be able to implement clean-up logic
-        return new Observable<Rc<PasswordManagerClient>>((subscriber) => {
-          const createAndInitializeClient = async () => {
-            if (
-              env == null ||
-              kdfParams == null ||
-              accountCryptographicState == null ||
-              userKey == null
-            ) {
-              return undefined;
-            }
+      switchMap(
+        ([
+          env,
+          account,
+          kdfParams,
+          accountCryptographicState,
+          userKey,
+          orgKeys,
+          v2UpgradeToken,
+        ]) => {
+          // Create our own observable to be able to implement clean-up logic
+          return new Observable<Rc<PasswordManagerClient>>((subscriber) => {
+            const createAndInitializeClient = async () => {
+              if (
+                env == null ||
+                kdfParams == null ||
+                accountCryptographicState == null ||
+                userKey == null
+              ) {
+                return undefined;
+              }
 
-            const settings = await this.toSettings(env);
-            const client = await this.sdkClientFactory.createSdkClient(
-              new JsTokenProvider(this.apiService, userId),
-              settings,
-            );
+              const settings = await this.toSettings(env);
+              const client = await this.sdkClientFactory.createSdkClient(
+                new JsTokenProvider(this.apiService, userId),
+                settings,
+              );
 
-            await this.initializeClient(
-              userId,
-              client,
-              account,
-              kdfParams.toSdkConfig(),
-              userKey,
-              accountCryptographicState,
-              orgKeys,
-              v2UpgradeToken,
-            );
+              await this.initializeClient(
+                userId,
+                client,
+                account,
+                kdfParams.toSdkConfig(),
+                userKey,
+                accountCryptographicState,
+                orgKeys,
+                v2UpgradeToken,
+              );
 
-            return client;
-          };
+              return client;
+            };
 
-          let client: Rc<PasswordManagerClient> | undefined;
-          createAndInitializeClient()
-            .then((c) => {
-              client = c === undefined ? undefined : new Rc(c);
+            let client: Rc<PasswordManagerClient> | undefined;
+            createAndInitializeClient()
+              .then((c) => {
+                client = c === undefined ? undefined : new Rc(c);
 
-              subscriber.next(client);
-            })
-            .catch((e) => {
-              subscriber.error(e);
-            });
+                subscriber.next(client);
+              })
+              .catch((e) => {
+                subscriber.error(e);
+              });
 
-          return () => client?.markForDisposal();
-        });
-      }),
+            return () => client?.markForDisposal();
+          });
+        },
+      ),
       tap({ finalize: () => this.sdkClientCache.delete(userId) }),
       share({
         connector: () => new ReplaySubject(1),
@@ -261,7 +273,7 @@ export class DefaultSdkService implements SdkService {
     userKey: UserKey,
     accountCryptographicState: WrappedAccountCryptographicState,
     orgKeys: Record<OrganizationId, EncString>,
-    v2UpgradeToken: V2UpgradeToken
+    v2UpgradeToken: V2UpgradeToken | null,
   ) {
     // Initialize the client managed repositories.
     await initializeClientManagedState(userId, client.platform().state(), this.stateProvider);

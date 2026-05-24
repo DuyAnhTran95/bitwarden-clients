@@ -14,9 +14,10 @@ import { SyncService } from "../../../platform/sync";
 import { UserId } from "../../../types/guid";
 import { CipherService } from "../../../vault/abstractions/cipher.service";
 import { MasterPasswordServiceAbstraction } from "../../master-password/abstractions/master-password.service.abstraction";
+import { withPasswordManagerSdk } from "../../utils";
 
 import { EncryptedMigration, MigrationRequirement } from "./encrypted-migration";
-import { withPasswordManagerSdk } from "../../utils";
+import { assertNonNullish } from "@bitwarden/common/auth/utils";
 
 /**
  * Migrates users that are on v1 encryption to v2 encryption by performing
@@ -133,37 +134,27 @@ export class V2KeyRotationMigration implements EncryptedMigration {
   }
 
   private async userEnrolledInAccountRecovery(userId: UserId): Promise<boolean> {
-    return await withPasswordManagerSdk(
-      userId,
-      this.sdkService,
-      async (sdk) => {
-        const organizationV1Memberships = await sdk.user_crypto_management().get_untrusted_organization_public_keys();
-        return organizationV1Memberships.length > 0;
-      }
-    );
+    return await withPasswordManagerSdk(userId, this.sdkService, async (sdk) => {
+      const organizationV1Memberships = await sdk
+        .user_crypto_management()
+        .get_untrusted_organization_public_keys();
+      return organizationV1Memberships.length > 0;
+    });
   }
 
   private async userHasGrantedEmergencyAccess(userId: UserId): Promise<boolean> {
-    return await withPasswordManagerSdk(
-      userId,
-      this.sdkService,
-      async (sdk) => {
-        const emergencyAccessV1Memberships = await sdk
-          .user_crypto_management()
-          .get_untrusted_emergency_access_public_keys();
-        return emergencyAccessV1Memberships.length > 0;
-      }
-    );
+    return await withPasswordManagerSdk(userId, this.sdkService, async (sdk) => {
+      const emergencyAccessV1Memberships = await sdk
+        .user_crypto_management()
+        .get_untrusted_emergency_access_public_keys();
+      return emergencyAccessV1Memberships.length > 0;
+    });
   }
 
   private async userHasCorruptedPrivateKey(userId: UserId): Promise<boolean> {
-    return await withPasswordManagerSdk(
-      userId,
-      this.sdkService,
-      async (sdk) => {
-        return await sdk.user_crypto_management().should_regenerate_public_key_encryption_key_pair();
-      }
-    );
+    return await withPasswordManagerSdk(userId, this.sdkService, async (sdk) => {
+      return await sdk.user_crypto_management().should_regenerate_public_key_encryption_key_pair();
+    });
   }
 
   private async userHasV1Attachments(userId: UserId): Promise<boolean> {

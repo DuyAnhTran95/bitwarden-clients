@@ -33,6 +33,7 @@ import {
   UnsignedSharedKey,
   WrappedAccountCryptographicState,
   Kdf,
+  V2UpgradeToken,
 } from "@bitwarden/sdk-internal";
 
 import { ApiService } from "../../../abstractions/api.service";
@@ -55,6 +56,7 @@ import { Rc } from "../../misc/reference-counting/rc";
 import { StateProvider } from "../../state";
 
 import { initializeClientManagedState } from "./client-managed-state";
+import { V2UpgradeTokenStateService } from "@bitwarden/common/key-management/upgrade-token/abstractions/v2-upgrade-token-state.service.abstraction";
 
 // A symbol that represents an overridden client that is explicitly set to undefined,
 // blocking the creation of an internal client for that user.
@@ -114,6 +116,7 @@ export class DefaultSdkService implements SdkService {
     private apiService: ApiService,
     private stateProvider: StateProvider,
     private configService: ConfigService,
+    private v2UpgradeTokenStateService: V2UpgradeTokenStateService,
     private userAgent: string | null = null,
   ) {}
 
@@ -177,6 +180,7 @@ export class DefaultSdkService implements SdkService {
     const orgKeys$ = this.keyService.encryptedOrgKeys$(userId).pipe(
       distinctUntilChanged(compareValues), // The upstream observable emits different objects with the same values
     );
+    const v2UpgradeToken$ = this.v2UpgradeTokenStateService.v2UpgradeToken$(userId).pipe(distinctUntilChanged());
 
     const client$ = combineLatest([
       this.environmentService.getEnvironment$(userId),
@@ -185,12 +189,13 @@ export class DefaultSdkService implements SdkService {
       accountCryptographicState$,
       userKey$,
       orgKeys$,
+      v2UpgradeToken$,
       SdkLoadService.Ready, // Makes sure we wait (once) for the SDK to be loaded
     ]).pipe(
       // Do not emit when multiple state values are written in quick succession
       debounceTime(100),
       // switchMap is required to allow the clean-up logic to be executed when `combineLatest` emits a new value.
-      switchMap(([env, account, kdfParams, accountCryptographicState, userKey, orgKeys]) => {
+      switchMap(([env, account, kdfParams, accountCryptographicState, userKey, orgKeys, v2UpgradeToken]) => {
         // Create our own observable to be able to implement clean-up logic
         return new Observable<Rc<PasswordManagerClient>>((subscriber) => {
           const createAndInitializeClient = async () => {
@@ -217,6 +222,7 @@ export class DefaultSdkService implements SdkService {
               userKey,
               accountCryptographicState,
               orgKeys,
+              v2UpgradeToken,
             );
 
             return client;
@@ -255,6 +261,7 @@ export class DefaultSdkService implements SdkService {
     userKey: UserKey,
     accountCryptographicState: WrappedAccountCryptographicState,
     orgKeys: Record<OrganizationId, EncString>,
+    v2UpgradeToken: V2UpgradeToken
   ) {
     // Initialize the client managed repositories.
     await initializeClientManagedState(userId, client.platform().state(), this.stateProvider);
@@ -269,6 +276,7 @@ export class DefaultSdkService implements SdkService {
         method: { clientManagedState: {} },
         kdfParams: kdf,
         accountCryptographicState: accountCryptographicState,
+        upgradeToken: v2UpgradeToken,
       });
     } else {
       await client.crypto().initialize_user_crypto({
@@ -281,6 +289,7 @@ export class DefaultSdkService implements SdkService {
         },
         kdfParams: kdf,
         accountCryptographicState: accountCryptographicState,
+        upgradeToken: v2UpgradeToken,
       });
     }
 

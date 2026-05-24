@@ -1,16 +1,13 @@
 import { mock } from "jest-mock-extended";
 import { of } from "rxjs";
 
- 
 import { SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.service";
+// eslint-disable-next-line no-restricted-imports
 import { KeyService } from "@bitwarden/key-management";
 import { LogService } from "@bitwarden/logging";
 import { CryptoClient } from "@bitwarden/sdk-internal";
 import { UserKeyRotationServiceAbstraction } from "@bitwarden/user-crypto-management";
 
-import { ApiService } from "../../../abstractions/api.service";
-import { OrganizationService } from "../../../admin-console/abstractions/organization/organization.service.abstraction";
-import { Organization } from "../../../admin-console/models/domain/organization";
 import { FeatureFlag } from "../../../enums/feature-flag.enum";
 import { ConfigService } from "../../../platform/abstractions/config/config.service";
 import { SymmetricCryptoKey } from "../../../platform/models/domain/symmetric-crypto-key";
@@ -42,9 +39,7 @@ describe("V2KeyRotationMigration", () => {
   const mockSyncService = mock<SyncService>();
   const mockConfigService = mock<ConfigService>();
   const mockLogService = mock<LogService>();
-  const mockOrganizationService = mock<OrganizationService>();
   const mockCipherService = mock<CipherService>();
-  const mockApiService = mock<ApiService>();
   const mockSdkService = mock<SdkService>();
 
   let sut: V2KeyRotationMigration;
@@ -72,8 +67,23 @@ describe("V2KeyRotationMigration", () => {
     return a;
   };
 
-  const arrangeSdkRegenerateResult = (shouldRegenerate: boolean) => {
+  /**
+   * Backs the three SDK methods reached via `withPasswordManagerSdk`:
+   * organization-recovery enrollment, granted emergency access, and
+   * corrupted-private-key detection.
+   */
+  const arrangeSdkResult = ({
+    orgKeys = [] as unknown[],
+    emergencyKeys = [] as unknown[],
+    shouldRegenerate = false,
+  }: {
+    orgKeys?: unknown[];
+    emergencyKeys?: unknown[];
+    shouldRegenerate?: boolean;
+  } = {}) => {
     const mockUserCryptoMgmt = {
+      get_untrusted_organization_public_keys: jest.fn().mockResolvedValue(orgKeys),
+      get_untrusted_emergency_access_public_keys: jest.fn().mockResolvedValue(emergencyKeys),
       should_regenerate_public_key_encryption_key_pair: jest
         .fn()
         .mockResolvedValue(shouldRegenerate),
@@ -94,11 +104,9 @@ describe("V2KeyRotationMigration", () => {
     mockMasterPasswordService.userHasMasterPassword.mockResolvedValue(true);
     mockKeyService.userKey$.mockReturnValue(of(mockUserKey));
     setKeyIdForKey(null);
-    mockOrganizationService.organizations$.mockReturnValue(of([]));
-    mockApiService.send.mockResolvedValue({ Data: [] });
     mockCipherService.failedToDecryptCiphers$.mockReturnValue(of([]));
     mockCipherService.cipherViews$.mockReturnValue(of([]));
-    arrangeSdkRegenerateResult(false);
+    arrangeSdkResult();
   };
 
   beforeEach(() => {
@@ -111,9 +119,7 @@ describe("V2KeyRotationMigration", () => {
       mockSyncService,
       mockConfigService,
       mockLogService,
-      mockOrganizationService,
       mockCipherService,
-      mockApiService,
       mockSdkService,
     );
   });
@@ -147,7 +153,6 @@ describe("V2KeyRotationMigration", () => {
 
     it("returns 'noMigrationNeeded' when user key is already v2", async () => {
       mockConfigService.getFeatureFlag.mockResolvedValue(true);
-      mockMasterPasswordService.userHasMasterPassword.mockResolvedValue(true);
       mockKeyService.userKey$.mockReturnValue(of(mockUserKey));
       setKeyIdForKey(v2KeyId);
 
@@ -159,7 +164,6 @@ describe("V2KeyRotationMigration", () => {
 
     it("returns 'noMigrationNeeded' when user has no user key", async () => {
       mockConfigService.getFeatureFlag.mockResolvedValue(true);
-      mockMasterPasswordService.userHasMasterPassword.mockResolvedValue(true);
       mockKeyService.userKey$.mockReturnValue(of(null as unknown as UserKey));
 
       const result = await sut.needsMigration(mockUserId);
@@ -185,44 +189,27 @@ describe("V2KeyRotationMigration", () => {
 
     it("returns 'noMigrationNeeded' when user is enrolled in account recovery", async () => {
       arrangeHappyPath();
-      mockOrganizationService.organizations$.mockReturnValue(
-        of([{ resetPasswordEnrolled: true } as Organization]),
-      );
+      arrangeSdkResult({ orgKeys: [{}] });
 
       const result = await sut.needsMigration(mockUserId);
 
       expect(result).toBe("noMigrationNeeded");
-      expect(mockApiService.send).not.toHaveBeenCalled();
+      expect(mockSyncService.fullSync).not.toHaveBeenCalled();
     });
 
     it("returns 'noMigrationNeeded' when user has granted emergency access", async () => {
       arrangeHappyPath();
-      mockApiService.send.mockResolvedValue({ Data: [{ id: "grant-1" }] });
+      arrangeSdkResult({ emergencyKeys: [{}] });
 
       const result = await sut.needsMigration(mockUserId);
 
       expect(result).toBe("noMigrationNeeded");
-      expect(mockApiService.send).toHaveBeenCalledWith(
-        "GET",
-        "/emergency-access/granted",
-        null,
-        mockUserId,
-        true,
-      );
-    });
-
-    it("accepts lowercase 'data' in the emergency-access response", async () => {
-      arrangeHappyPath();
-      mockApiService.send.mockResolvedValue({ data: [{ id: "grant-1" }] });
-
-      const result = await sut.needsMigration(mockUserId);
-
-      expect(result).toBe("noMigrationNeeded");
+      expect(mockSyncService.fullSync).not.toHaveBeenCalled();
     });
 
     it("returns 'noMigrationNeeded' when user has a corrupted/missing private key", async () => {
       arrangeHappyPath();
-      arrangeSdkRegenerateResult(true);
+      arrangeSdkResult({ shouldRegenerate: true });
 
       const result = await sut.needsMigration(mockUserId);
 
@@ -276,7 +263,6 @@ describe("V2KeyRotationMigration", () => {
     });
 
     it("performs a full sync before rotating the user key", async () => {
-      mockUserKeyRotationService.rotateUserKey.mockResolvedValue(true);
       const callOrder: string[] = [];
       mockSyncService.fullSync.mockImplementation(async () => {
         callOrder.push("fullSync");
@@ -292,8 +278,8 @@ describe("V2KeyRotationMigration", () => {
       expect(mockSyncService.fullSync).toHaveBeenCalledWith(true);
       expect(mockUserKeyRotationService.rotateUserKey).toHaveBeenCalledWith(
         { Password: { password: mockMasterPassword } },
+        "CreateIfNeeded",
         mockUserId,
-        true,
       );
       expect(callOrder).toEqual(["fullSync", "rotateUserKey", "fullSync"]);
     });

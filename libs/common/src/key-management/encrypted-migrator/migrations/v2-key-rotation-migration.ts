@@ -1,5 +1,6 @@
 import { firstValueFrom } from "rxjs";
 
+import { assertNonNullish } from "@bitwarden/common/auth/utils";
 import { SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.service";
 // eslint-disable-next-line no-restricted-imports
 import { KeyService } from "@bitwarden/key-management";
@@ -17,7 +18,6 @@ import { MasterPasswordServiceAbstraction } from "../../master-password/abstract
 import { withPasswordManagerSdk } from "../../utils";
 
 import { EncryptedMigration, MigrationRequirement } from "./encrypted-migration";
-import { assertNonNullish } from "@bitwarden/common/auth/utils";
 
 /**
  * Migrates users that are on v1 encryption to v2 encryption by performing

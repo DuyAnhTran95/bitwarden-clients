@@ -1,7 +1,7 @@
-import { catchError, EMPTY, firstValueFrom, map } from "rxjs";
+import { firstValueFrom } from "rxjs";
 
-import { SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.service";
 import { withPasswordManagerSdk } from "@bitwarden/common/key-management/utils";
+import { SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.service";
 import { Utils } from "@bitwarden/common/platform/misc/utils";
 import { DialogService } from "@bitwarden/components";
 import {

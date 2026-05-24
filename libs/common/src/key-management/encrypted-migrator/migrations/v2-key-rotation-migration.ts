@@ -1,4 +1,4 @@
-import { concatMap, firstValueFrom } from "rxjs";
+import { firstValueFrom } from "rxjs";
 
 import { SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.service";
 // eslint-disable-next-line no-restricted-imports
@@ -7,9 +7,6 @@ import { LogService } from "@bitwarden/logging";
 import { CryptoClient } from "@bitwarden/sdk-internal";
 import { UserKeyRotationServiceAbstraction } from "@bitwarden/user-crypto-management";
 
-import { ApiService } from "../../../abstractions/api.service";
-import { OrganizationService } from "../../../admin-console/abstractions/organization/organization.service.abstraction";
-import { assertNonNullish } from "../../../auth/utils";
 import { FeatureFlag } from "../../../enums/feature-flag.enum";
 import { ConfigService } from "../../../platform/abstractions/config/config.service";
 import { SdkLoadService } from "../../../platform/abstractions/sdk/sdk-load.service";
@@ -19,6 +16,7 @@ import { CipherService } from "../../../vault/abstractions/cipher.service";
 import { MasterPasswordServiceAbstraction } from "../../master-password/abstractions/master-password.service.abstraction";
 
 import { EncryptedMigration, MigrationRequirement } from "./encrypted-migration";
+import { withPasswordManagerSdk } from "../../utils";
 
 /**
  * Migrates users that are on v1 encryption to v2 encryption by performing
@@ -32,9 +30,7 @@ export class V2KeyRotationMigration implements EncryptedMigration {
     private readonly syncService: SyncService,
     private readonly configService: ConfigService,
     private readonly logService: LogService,
-    private readonly organizationService: OrganizationService,
     private readonly cipherService: CipherService,
-    private readonly apiService: ApiService,
     private readonly sdkService: SdkService,
   ) {}
 
@@ -137,35 +133,36 @@ export class V2KeyRotationMigration implements EncryptedMigration {
   }
 
   private async userEnrolledInAccountRecovery(userId: UserId): Promise<boolean> {
-    const orgs = await firstValueFrom(this.organizationService.organizations$(userId));
-    return orgs.some((o) => o.resetPasswordEnrolled);
+    return await withPasswordManagerSdk(
+      userId,
+      this.sdkService,
+      async (sdk) => {
+        const organizationV1Memberships = await sdk.user_crypto_management().get_untrusted_organization_public_keys();
+        return organizationV1Memberships.length > 0;
+      }
+    );
   }
 
   private async userHasGrantedEmergencyAccess(userId: UserId): Promise<boolean> {
-    const response = await this.apiService.send(
-      "GET",
-      "/emergency-access/granted",
-      null,
+    return await withPasswordManagerSdk(
       userId,
-      true,
+      this.sdkService,
+      async (sdk) => {
+        const emergencyAccessV1Memberships = await sdk
+          .user_crypto_management()
+          .get_untrusted_emergency_access_public_keys();
+        return emergencyAccessV1Memberships.length > 0;
+      }
     );
-    const data = response?.Data ?? response?.data;
-    return Array.isArray(data) && data.length > 0;
   }
 
   private async userHasCorruptedPrivateKey(userId: UserId): Promise<boolean> {
-    return firstValueFrom(
-      this.sdkService.userClient$(userId).pipe(
-        concatMap(async (sdk) => {
-          if (!sdk) {
-            throw new Error("SDK not available");
-          }
-          using ref = sdk.take();
-          return await ref.value
-            .user_crypto_management()
-            .should_regenerate_public_key_encryption_key_pair();
-        }),
-      ),
+    return await withPasswordManagerSdk(
+      userId,
+      this.sdkService,
+      async (sdk) => {
+        return await sdk.user_crypto_management().should_regenerate_public_key_encryption_key_pair();
+      }
     );
   }
 

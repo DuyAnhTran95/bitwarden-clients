@@ -16,6 +16,7 @@ import {
   takeWhile,
   throwIfEmpty,
   firstValueFrom,
+  debounceTime,
 } from "rxjs";
 
 import { FeatureFlag } from "@bitwarden/common/enums/feature-flag.enum";
@@ -186,6 +187,8 @@ export class DefaultSdkService implements SdkService {
       orgKeys$,
       SdkLoadService.Ready, // Makes sure we wait (once) for the SDK to be loaded
     ]).pipe(
+      // Do not emit when multiple state values are written in quick succession
+      debounceTime(100),
       // switchMap is required to allow the clean-up logic to be executed when `combineLatest` emits a new value.
       switchMap(([env, account, kdfParams, accountCryptographicState, userKey, orgKeys]) => {
         // Create our own observable to be able to implement clean-up logic

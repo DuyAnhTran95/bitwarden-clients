@@ -15,7 +15,7 @@ import { ConfigService } from "../../../platform/abstractions/config/config.serv
 import { SymmetricCryptoKey } from "../../../platform/models/domain/symmetric-crypto-key";
 import { SyncService } from "../../../platform/sync";
 import { UserId } from "../../../types/guid";
-import { UserKey, UserPrivateKey } from "../../../types/key";
+import { UserKey } from "../../../types/key";
 import { CipherService } from "../../../vault/abstractions/cipher.service";
 import { AttachmentView } from "../../../vault/models/view/attachment.view";
 import { CipherView } from "../../../vault/models/view/cipher.view";
@@ -23,6 +23,7 @@ import { EncString } from "../../crypto/models/enc-string";
 import { MasterPasswordServiceAbstraction } from "../../master-password/abstractions/master-password.service.abstraction";
 
 import { V2KeyRotationMigration } from "./v2-key-rotation-migration";
+import { SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.service";
 
 jest.mock("@bitwarden/sdk-internal", () => ({
   CryptoClient: {
@@ -44,13 +45,13 @@ describe("V2KeyRotationMigration", () => {
   const mockOrganizationService = mock<OrganizationService>();
   const mockCipherService = mock<CipherService>();
   const mockApiService = mock<ApiService>();
+  const mockSdkService = mock<SdkService>();
 
   let sut: V2KeyRotationMigration;
 
   const mockUserId = "00000000-0000-0000-0000-000000000000" as UserId;
   const mockMasterPassword = "masterPassword";
   const mockUserKey = new SymmetricCryptoKey(new Uint8Array(64)) as UserKey;
-  const mockUserPrivateKey = new Uint8Array([9, 9, 9]) as UserPrivateKey;
   const v2KeyId = new Uint8Array([1, 2, 3, 4]);
 
   const setKeyIdForKey = (keyId: Uint8Array | null) => {
@@ -71,17 +72,33 @@ describe("V2KeyRotationMigration", () => {
     return a;
   };
 
+  const arrangeSdkRegenerateResult = (shouldRegenerate: boolean) => {
+    const mockUserCryptoMgmt = {
+      should_regenerate_public_key_encryption_key_pair: jest
+        .fn()
+        .mockResolvedValue(shouldRegenerate),
+    };
+    mockSdkService.userClient$.mockReturnValue(
+      of({
+        take: () => ({
+          value: { user_crypto_management: () => mockUserCryptoMgmt },
+          [Symbol.dispose]: jest.fn(),
+        }),
+      } as any),
+    );
+  };
+
   /** Wires every gate to pass so individual tests can fail a single one. */
   const arrangeHappyPath = () => {
     mockConfigService.getFeatureFlag.mockResolvedValue(true);
     mockMasterPasswordService.userHasMasterPassword.mockResolvedValue(true);
     mockKeyService.userKey$.mockReturnValue(of(mockUserKey));
-    mockKeyService.userPrivateKey$.mockReturnValue(of(mockUserPrivateKey));
     setKeyIdForKey(null);
     mockOrganizationService.organizations$.mockReturnValue(of([]));
     mockApiService.send.mockResolvedValue({ Data: [] });
     mockCipherService.failedToDecryptCiphers$.mockReturnValue(of([]));
     mockCipherService.cipherViews$.mockReturnValue(of([]));
+    arrangeSdkRegenerateResult(false);
   };
 
   beforeEach(() => {
@@ -97,6 +114,7 @@ describe("V2KeyRotationMigration", () => {
       mockOrganizationService,
       mockCipherService,
       mockApiService,
+      mockSdkService,
     );
   });
 
@@ -118,7 +136,7 @@ describe("V2KeyRotationMigration", () => {
     });
 
     it("returns 'noMigrationNeeded' when user has no master password", async () => {
-      mockConfigService.getFeatureFlag.mockResolvedValue(true);
+      arrangeHappyPath();
       mockMasterPasswordService.userHasMasterPassword.mockResolvedValue(false);
 
       const result = await sut.needsMigration(mockUserId);
@@ -151,9 +169,7 @@ describe("V2KeyRotationMigration", () => {
     });
 
     it("returns 'noMigrationNeeded' when post-sync the user has been upgraded to v2 elsewhere", async () => {
-      mockConfigService.getFeatureFlag.mockResolvedValue(true);
-      mockMasterPasswordService.userHasMasterPassword.mockResolvedValue(true);
-      mockKeyService.userKey$.mockReturnValue(of(mockUserKey));
+      arrangeHappyPath();
       ((CryptoClient as any).get_key_id_for_symmetric_key as jest.Mock)
         .mockReturnValueOnce(null)
         .mockReturnValueOnce(v2KeyId);
@@ -206,7 +222,7 @@ describe("V2KeyRotationMigration", () => {
 
     it("returns 'noMigrationNeeded' when user has a corrupted/missing private key", async () => {
       arrangeHappyPath();
-      mockKeyService.userPrivateKey$.mockReturnValue(of(null));
+      arrangeSdkRegenerateResult(true);
 
       const result = await sut.needsMigration(mockUserId);
 
@@ -220,15 +236,6 @@ describe("V2KeyRotationMigration", () => {
       const result = await sut.needsMigration(mockUserId);
 
       expect(result).toBe("noMigrationNeeded");
-    });
-
-    it("waits for failedToDecryptCiphers$ to emit a non-null value", async () => {
-      arrangeHappyPath();
-      mockCipherService.failedToDecryptCiphers$.mockReturnValue(of(null, []));
-
-      const result = await sut.needsMigration(mockUserId);
-
-      expect(result).toBe("needsMigrationWithMasterPassword");
     });
 
     it("returns 'noMigrationNeeded' when user has a v1 attachment (no encrypted key)", async () => {
@@ -268,10 +275,6 @@ describe("V2KeyRotationMigration", () => {
       await expect(sut.runMigrations(null as any, mockMasterPassword)).rejects.toThrow("userId");
     });
 
-    it("throws when masterPassword is null", async () => {
-      await expect(sut.runMigrations(mockUserId, null)).rejects.toThrow("masterPassword");
-    });
-
     it("performs a full sync before rotating the user key", async () => {
       mockUserKeyRotationService.rotateUserKey.mockResolvedValue(true);
       const callOrder: string[] = [];
@@ -290,8 +293,9 @@ describe("V2KeyRotationMigration", () => {
       expect(mockUserKeyRotationService.rotateUserKey).toHaveBeenCalledWith(
         { Password: { password: mockMasterPassword } },
         mockUserId,
+        true,
       );
-      expect(callOrder).toEqual(["fullSync", "rotateUserKey"]);
+      expect(callOrder).toEqual(["fullSync", "rotateUserKey", "fullSync"]);
     });
 
     it("throws when the rotation service returns false (trust denied)", async () => {

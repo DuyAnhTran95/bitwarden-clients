@@ -26,6 +26,7 @@ import { BiometricPersistentMigration } from "./migrations/biometric-persistent-
 import { EncryptedMigration } from "./migrations/encrypted-migration";
 import { MinimumKdfMigration } from "./migrations/minimum-kdf-migration";
 import { V2KeyRotationMigration } from "./migrations/v2-key-rotation-migration";
+import { SdkService } from "@bitwarden/common/platform/abstractions/sdk/sdk.service";
 
 jest.mock("./migrations/minimum-kdf-migration");
 jest.mock("./migrations/biometric-persistent-encryption-migration");
@@ -51,6 +52,7 @@ describe("EncryptedMigrator", () => {
   const mockMigration = mock<MinimumKdfMigration>();
   const mockBiometricMigration = mock<BiometricPersistentMigration>();
   const mockV2KeyRotationMigration = mock<V2KeyRotationMigration>();
+  const mockSdkService = mock<SdkService>();
 
   const mockUserId = "00000000-0000-0000-0000-000000000000" as UserId;
   const mockMasterPassword = "masterPassword123";
@@ -92,6 +94,7 @@ describe("EncryptedMigrator", () => {
       mockOrganizationService,
       mockCipherService,
       mockApiService,
+      mockSdkService,
     );
   });
 

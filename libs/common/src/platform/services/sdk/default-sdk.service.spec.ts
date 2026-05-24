@@ -29,6 +29,7 @@ import { Utils } from "../../misc/utils";
 import { SymmetricCryptoKey } from "../../models/domain/symmetric-crypto-key";
 
 import { DefaultSdkService } from "./default-sdk.service";
+import { V2UpgradeTokenStateService } from "@bitwarden/common/key-management/upgrade-token/abstractions/v2-upgrade-token-state.service.abstraction";
 
 class TestSdkLoadService extends SdkLoadService {
   protected override load(): Promise<void> {
@@ -50,6 +51,7 @@ describe("DefaultSdkService", () => {
     let accountService!: FakeAccountService;
     let fakeStateProvider!: FakeStateProvider;
     let apiService!: MockProxy<ApiService>;
+    let upgradeTokenStateService!: MockProxy<V2UpgradeTokenStateService>;
 
     beforeEach(async () => {
       await new TestSdkLoadService().loadAndInit();
@@ -65,6 +67,7 @@ describe("DefaultSdkService", () => {
       accountService = mockAccountServiceWith(mockUserId);
       fakeStateProvider = new FakeStateProvider(accountService);
       configService = mock<ConfigService>();
+      upgradeTokenStateService = mock<V2UpgradeTokenStateService>();
 
       configService.serverConfig$ = new BehaviorSubject(null);
 
@@ -82,6 +85,7 @@ describe("DefaultSdkService", () => {
         apiService,
         fakeStateProvider,
         configService,
+        upgradeTokenStateService,
       );
     });
 

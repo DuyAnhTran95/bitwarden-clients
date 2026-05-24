@@ -43,9 +43,7 @@ export class DefaultEncryptedMigrator implements EncryptedMigrator {
     biometricStateService: BiometricStateService,
     platformUtilsService: PlatformUtilsService,
     userKeyRotationService: UserKeyRotationServiceAbstraction,
-    organizationService: OrganizationService,
     cipherService: CipherService,
-    apiService: ApiService,
     sdkService: SdkService,
   ) {
     // Register migrations here
@@ -84,9 +82,7 @@ export class DefaultEncryptedMigrator implements EncryptedMigrator {
           syncService,
           configService,
           logService,
-          organizationService,
           cipherService,
-          apiService,
           sdkService,
         ),
       });

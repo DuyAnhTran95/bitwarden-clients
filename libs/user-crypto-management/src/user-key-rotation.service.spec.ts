@@ -313,7 +313,7 @@ describe("DefaultUserKeyRotationService", () => {
     });
 
     it("calls verifyTrust with the correct userId", async () => {
-      await service.rotateUserKey(mockPasswordRotation, mockUserId);
+      await service.rotateUserKey(mockPasswordRotation, "Skip", mockUserId);
 
       expect(verifyTrustSpy).toHaveBeenCalledWith(mockUserId);
     });
@@ -321,7 +321,7 @@ describe("DefaultUserKeyRotationService", () => {
     it("does not call rotate_user_keys when verifyTrust throws", async () => {
       verifyTrustSpy.mockRejectedValue(new Error("trust check failed"));
 
-      await expect(service.rotateUserKey(mockPasswordRotation, mockUserId)).rejects.toThrow(
+      await expect(service.rotateUserKey(mockPasswordRotation, "Skip", mockUserId)).rejects.toThrow(
         "trust check failed",
       );
 
@@ -335,7 +335,7 @@ describe("DefaultUserKeyRotationService", () => {
         trustedEmergencyAccessUserPublicKeys: [],
       });
 
-      const result = await service.rotateUserKey(mockPasswordRotation, mockUserId);
+      const result = await service.rotateUserKey(mockPasswordRotation, "Skip", mockUserId);
 
       expect(result).toBe(false);
       expect(mockUserCryptoManagement.rotate_user_keys).not.toHaveBeenCalled();
@@ -346,7 +346,7 @@ describe("DefaultUserKeyRotationService", () => {
     });
 
     it("returns true on successful rotation", async () => {
-      const result = await service.rotateUserKey(mockPasswordRotation, mockUserId);
+      const result = await service.rotateUserKey(mockPasswordRotation, "Skip", mockUserId);
 
       expect(result).toBe(true);
       expect(mockUserCryptoManagement.rotate_user_keys).toHaveBeenCalledWith(
@@ -365,7 +365,7 @@ describe("DefaultUserKeyRotationService", () => {
         trustedEmergencyAccessUserPublicKeys: [],
       });
 
-      await service.rotateUserKey(mockPasswordRotation, mockUserId);
+      await service.rotateUserKey(mockPasswordRotation, "Skip", mockUserId);
 
       expect(mockUserCryptoManagement.rotate_user_keys).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -379,7 +379,7 @@ describe("DefaultUserKeyRotationService", () => {
     it("throws when the SDK client is null", async () => {
       mockSdkService.userClient$.mockReturnValue(of(null) as any);
 
-      await expect(service.rotateUserKey(mockPasswordRotation, mockUserId)).rejects.toThrow(
+      await expect(service.rotateUserKey(mockPasswordRotation, "Skip", mockUserId)).rejects.toThrow(
         "SDK not available",
       );
       expect(mockUserCryptoManagement.rotate_user_keys).not.toHaveBeenCalled();
@@ -388,7 +388,7 @@ describe("DefaultUserKeyRotationService", () => {
     it("throws when rotate_user_keys rejects", async () => {
       mockUserCryptoManagement.rotate_user_keys.mockRejectedValue(new Error("rotation failed"));
 
-      await expect(service.rotateUserKey(mockPasswordRotation, mockUserId)).rejects.toThrow(
+      await expect(service.rotateUserKey(mockPasswordRotation, "Skip", mockUserId)).rejects.toThrow(
         "rotation failed",
       );
     });

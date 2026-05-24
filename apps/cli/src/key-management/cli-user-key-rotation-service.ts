@@ -21,8 +21,8 @@ export class CliUserKeyRotationService extends UserKeyRotationServiceAbstraction
 
   rotateUserKey(
     _keyRotationMethod: KeyRotationMethod,
+    _upgradeTokenAction: "CreateIfNeeded" | "Skip",
     _userId: UserId,
-    _allowNoLogoutUpgrade: boolean,
   ): Promise<boolean> {
     throw new Error("User key rotation is not supported on the CLI.");
   }

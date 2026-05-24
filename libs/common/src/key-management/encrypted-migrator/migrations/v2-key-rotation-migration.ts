@@ -18,6 +18,7 @@ import { MasterPasswordServiceAbstraction } from "../../master-password/abstract
 import { withPasswordManagerSdk } from "../../utils";
 
 import { EncryptedMigration, MigrationRequirement } from "./encrypted-migration";
+import { EncryptionType } from "@bitwarden/common/platform/enums";
 
 /**
  * Migrates users that are on v1 encryption to v2 encryption by performing
@@ -104,18 +105,18 @@ export class V2KeyRotationMigration implements EncryptedMigration {
     assertNonNullish(userId, "userId");
 
     this.logService.info(
-      `[V2KeyRotationMigration] Performing full sync before v2 rotation for user ${userId}`,
+      `[V2KeyRotationMigration] Performing full sync before v2 upgrade for user ${userId}`,
     );
     await this.syncService.fullSync(true);
 
     this.logService.info(`[V2KeyRotationMigration] Rotating user key for user ${userId}`);
     const success = await this.userKeyRotationService.rotateUserKey(
-      { Password: { password: masterPassword } },
+      { Password: { password: masterPassword! } },
       "CreateIfNeeded",
       userId,
     );
     this.logService.info(
-      `[V2KeyRotationMigration] Performing second full sync after v2 rotation for user ${userId}`,
+      `[V2KeyRotationMigration] Performing full sync after v2 upgrade for user ${userId}`,
     );
     await this.syncService.fullSync(true);
 
@@ -129,8 +130,7 @@ export class V2KeyRotationMigration implements EncryptedMigration {
     if (userKey == null) {
       return false;
     }
-    await SdkLoadService.Ready;
-    return CryptoClient.get_key_id_for_symmetric_key(userKey.toEncoded()) == null;
+    return userKey.inner().type === EncryptionType.CoseEncrypt0;
   }
 
   private async userEnrolledInAccountRecovery(userId: UserId): Promise<boolean> {
@@ -159,11 +159,11 @@ export class V2KeyRotationMigration implements EncryptedMigration {
 
   private async userHasV1Attachments(userId: UserId): Promise<boolean> {
     const ciphers = await firstValueFrom(this.cipherService.cipherViews$(userId));
-    return ciphers.some((c) => c.attachments?.some((a) => a.isLegacyAttachment()));
+    return ciphers != null && ciphers.some((c) => c.attachments?.some((a) => a.isLegacyAttachment()));
   }
 
   private async userHasCorruptCiphers(userId: UserId): Promise<boolean> {
     const ciphers = await firstValueFrom(this.cipherService.failedToDecryptCiphers$(userId));
-    return ciphers.length > 0;
+    return ciphers != null && ciphers.length > 0;
   }
 }

@@ -288,7 +288,7 @@ export class DefaultSdkService implements SdkService {
         method: { clientManagedState: {} },
         kdfParams: kdf,
         accountCryptographicState: accountCryptographicState,
-        upgradeToken: v2UpgradeToken,
+        upgradeToken: v2UpgradeToken ?? undefined,
       });
     } else {
       await client.crypto().initialize_user_crypto({
@@ -301,7 +301,7 @@ export class DefaultSdkService implements SdkService {
         },
         kdfParams: kdf,
         accountCryptographicState: accountCryptographicState,
-        upgradeToken: v2UpgradeToken,
+        upgradeToken: v2UpgradeToken ?? undefined,
       });
     }
 

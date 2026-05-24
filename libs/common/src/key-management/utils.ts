@@ -33,6 +33,10 @@ export async function withPasswordManagerSdk<TResult>(
   return await firstValueFrom(
     sdkService.userClient$(userId).pipe(
       map(async (sdk) => {
+        if (sdk == null) {
+          throw new Error("SDK not available");
+        }
+
         using ref = sdk.take();
         return await passedInFunction(ref.value);
       }),

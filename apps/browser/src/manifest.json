@@ -140,10 +140,10 @@
   ],
   "__firefox__browser_specific_settings": {
     "gecko": {
-      "id": "{446900e4-71c2-419f-a6a7-df9c091e268b}",
+      "id": "{5f6b2cd3-eee1-4f11-83a6-40e0fc6cc367}",
       "strict_min_version": "91.0",
       "data_collection_permissions": {
-        "used": [],
+        "required": ["authenticationInfo"],
         "optional": []
       }
     }
